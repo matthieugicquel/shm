@@ -1,0 +1,34 @@
+{
+  "name": "shm",
+  "description": "Simple http mocking for tests",
+  "author": {
+    "name": "Matthieu Gicquel",
+    "email": "matthieug@bam.tech"
+  },
+  "license": "MIT",
+  "main": "./dist/src/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "default": "./dist/src/index.js"
+    }
+  },
+  "scripts": {
+    "format": "prettier --write .",
+    "build": "tsc",
+    "test:unit": "vitest",
+    "test:types": "tsc --noEmit",
+    "test:format": "prettier --check ."
+  },
+  "devDependencies": {
+    "axios": "^1.5.1",
+    "bun-types": "latest",
+    "prettier": "^3.0.3",
+    "typescript": "^5.2.2",
+    "vitest": "^0.34.6"
+  },
+  "dependencies": {
+    "@mswjs/interceptors": "^0.25.6",
+    "regexparam": "^2.0.1"
+  }
+}
