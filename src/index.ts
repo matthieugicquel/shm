@@ -4,7 +4,7 @@ export type { HandlerConfig } from "./types";
 
 export { createMockServer } from "./createMockServer";
 
-export { expectHandlersMatchingRequests } from "./expectHandlersMatchingRequests";
+export { expectRequestsToMatchHandlers } from "./expectRequestsToMatchHandlers";
 
 /**
  * Prevent all outgoing network requests

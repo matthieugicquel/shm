@@ -1,6 +1,6 @@
 import { serverInstance } from "./server";
 
-export const expectHandlersMatchingRequests = () => {
+export const expectRequestsToMatchHandlers = () => {
   if (!serverInstance) return;
 
   const { activeHandlers, unhandledRequests, matchingLog } = serverInstance.reset();

@@ -1,7 +1,7 @@
 import { expect, it, afterEach } from "vitest";
 
 import { createMockServer, resetMockServers } from "./index";
-import { expectHandlersMatchingRequests } from "./expectHandlersMatchingRequests";
+import { expectRequestsToMatchHandlers } from "./expectRequestsToMatchHandlers";
 
 const mockServer = createMockServer("https://test.com");
 
@@ -9,7 +9,7 @@ afterEach(resetMockServers);
 
 const getThrownMessage = () => {
   try {
-    expectHandlersMatchingRequests();
+    expectRequestsToMatchHandlers();
   } catch (error) {
     return (error as Error).message;
   }

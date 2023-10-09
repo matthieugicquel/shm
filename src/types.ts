@@ -27,9 +27,6 @@ export type FullHandlerConfig<TResponse> = {
      *
      */
     searchParams?: Record<string, string>;
-    /**
-     *
-     */
   };
   response?: {
     status?: number;
