@@ -28,41 +28,49 @@ export const configToDefinition = (params: {
   url: string;
   method: HttpMethod;
   config: HandlerConfig<unknown>;
+  serverConfig: FullHandlerConfig<unknown>;
 }): HandlerDefinition => {
-  const { method, config, baseUrl } = params;
+  const { method, config, baseUrl, serverConfig } = params;
 
   const url = normalizeUrl(new URL(params.url, baseUrl).toString());
 
+  const baseDefinition = {
+    persistent: false,
+    ...serverConfig,
+    method,
+    url,
+    request: {
+      pathParams: {},
+      searchParams: undefined,
+      ...serverConfig.request,
+    },
+    response: {
+      status: 200,
+      body: undefined,
+      ...serverConfig.response,
+    },
+  };
+
   if (isFullHandlerConfig(config)) {
     return {
-      method,
-      url,
-      persistent: false,
+      ...baseDefinition,
       ...config,
       request: {
-        pathParams: {},
-        searchParams: undefined,
+        ...baseDefinition.request,
         ...config.request,
       },
       response: {
-        status: 200,
-        body: undefined,
+        ...baseDefinition.response,
         ...config.response,
       },
     };
   }
 
   return {
-    method,
-    url,
-    persistent: false,
+    ...baseDefinition,
     response: {
-      status: 200,
+      ...baseDefinition.response,
       body: config,
-    },
-    request: {
-      pathParams: {},
-      searchParams: undefined,
     },
   };
 };

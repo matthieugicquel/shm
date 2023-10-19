@@ -315,3 +315,19 @@ describe("persistent handlers", () => {
     expect(response.status).toBe(404);
   });
 });
+
+describe("server-level config", () => {
+  it("takes into a account a `persistent: true` server-level config", async () => {
+    const mockServer2 = createMockServer("https://test2.com", {
+      persistent: true,
+    });
+
+    mockServer2.get("/test", expectedResponse);
+
+    const response1 = await fetch("https://test2.com/test");
+    expect(await response1.json()).toEqual(expectedResponse);
+
+    const response2 = await fetch("https://test2.com/test");
+    expect(await response2.json()).toEqual(expectedResponse);
+  });
+});
