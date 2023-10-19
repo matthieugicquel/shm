@@ -5,7 +5,7 @@
 ## Installation
 
 ```bash
-yarn add --dev shm
+yarn add --dev @matthieug/shm
 ```
 
 ```ts

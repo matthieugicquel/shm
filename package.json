@@ -1,12 +1,12 @@
 {
-  "name": "shm",
+  "name": "@matthieug/shm",
   "description": "Simple http mocking for tests",
   "homepage": "https://github.com/matthieugicquel/shm#readme",
   "repository": "github:matthieugicquel/shm",
   "bugs": {
     "url": "https://github.com/matthieugicquel/shm/issues"
   },
-  "version": "0.1.0",
+  "version": "0.0.0",
   "author": {
     "name": "Matthieu Gicquel",
     "email": "matthieug@bam.tech"
@@ -22,9 +22,14 @@
   "files": [
     "/dist/**/*"
   ],
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "format": "prettier --write .",
     "build": "tsc",
+    "release": "bun install && np --no-cleanup",
+    "test": "bun run vitest run && bun run test:types && bun run test:format",
     "test:unit": "vitest",
     "test:types": "tsc --noEmit",
     "test:format": "prettier --check ."
@@ -32,6 +37,7 @@
   "devDependencies": {
     "axios": "^1.5.1",
     "bun-types": "latest",
+    "np": "^8.0.4",
     "prettier": "^3.0.3",
     "typescript": "^5.2.2",
     "vitest": "^0.34.6"
