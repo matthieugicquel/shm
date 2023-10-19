@@ -15,7 +15,8 @@
     "outDir": "./dist",
     "sourceMap": true,
     "declaration": true,
-    "declarationMap": true
+    "declarationMap": true,
+    "tsBuildInfoFile": ".cache/tsconfig.tsbuildinfo"
   },
   "include": ["./src", "./vendor"]
 }

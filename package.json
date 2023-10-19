@@ -1,6 +1,12 @@
 {
   "name": "shm",
   "description": "Simple http mocking for tests",
+  "homepage": "https://github.com/matthieugicquel/shm#readme",
+  "repository": "github:matthieugicquel/shm",
+  "bugs": {
+    "url": "https://github.com/matthieugicquel/shm/issues"
+  },
+  "version": "0.1.0",
   "author": {
     "name": "Matthieu Gicquel",
     "email": "matthieug@bam.tech"
@@ -13,6 +19,9 @@
       "default": "./dist/src/index.js"
     }
   },
+  "files": [
+    "/dist/**/*"
+  ],
   "scripts": {
     "format": "prettier --write .",
     "build": "tsc",
