@@ -30,6 +30,10 @@ export type FullHandlerConfig<TResponse> = {
   };
   response?: {
     status?: number;
+    /**
+     * The body a matching request will be responded with
+     * Currently, it goes through `JSON.stringify`, which means it must be a string or json-compatible JS object
+     */
     body?: TResponse;
   };
 };
@@ -37,14 +41,14 @@ export type FullHandlerConfig<TResponse> = {
 export type HandlerTools = {
   wasCalled: () => boolean;
   /**
-   * @returns A clone of the request that was intercepted by the handler
-   */
-  getSentRequest: () => Request | undefined;
-  /**
    * @returns The body of the request as a JSON object
    * Will throw an error if the body is not JSON, use `getSentRequest` to get the raw body
    */
   getSentBody: () => Promise<unknown>;
+  /**
+   * @returns A clone of the request that was intercepted by the handler
+   */
+  getSentRequest: () => Request | undefined;
 };
 
 export const HTTP_METHODS = [
