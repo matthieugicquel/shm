@@ -39,7 +39,7 @@ const create = () => {
     for (const logEntry of requestLog) MatchingLog.add(logEntry);
     UnhandledRequests.add(request);
 
-    return new Response("No matching handler", { status: 404 });
+    return new Response(JSON.stringify({ message: "No matching handler" }), { status: 404 });
   });
 
   return {
