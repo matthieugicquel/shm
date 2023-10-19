@@ -28,6 +28,7 @@
   "scripts": {
     "format": "prettier --write .",
     "build": "tsc",
+    "prepublishOnly": "tsc",
     "release": "bun install && np --no-cleanup",
     "test": "bun run vitest run && bun run test:types && bun run test:format",
     "test:unit": "vitest",
