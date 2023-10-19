@@ -21,10 +21,12 @@ export const expectRequestsToMatchHandlers = () => {
     throw new ShmMismatchError(`${message}\n`);
   }
 
-  if (activeHandlers.length > 0) {
+  const relevantActiveHandlers = activeHandlers.filter((h) => h.persistent === false);
+
+  if (relevantActiveHandlers.length > 0) {
     const message = [
       "SHM: Received requests did not match defined handlers",
-      ...activeHandlers.flatMap((h) => {
+      ...relevantActiveHandlers.flatMap((h) => {
         return [
           `\tUNUSED HANDLER:    ${h.method} ${h.url}`,
           ...matchingLog

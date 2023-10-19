@@ -9,6 +9,7 @@ export type HandlerDefinition = {
    * - searchParams are ??? TODO
    */
   url: string;
+  persistent: boolean;
   response: {
     status: number;
     body: unknown | undefined;
@@ -36,6 +37,8 @@ export const configToDefinition = (params: {
     return {
       method,
       url,
+      persistent: false,
+      ...config,
       request: {
         pathParams: {},
         searchParams: undefined,
@@ -52,6 +55,7 @@ export const configToDefinition = (params: {
   return {
     method,
     url,
+    persistent: false,
     response: {
       status: 200,
       body: config,

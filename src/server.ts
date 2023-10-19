@@ -4,6 +4,7 @@ import { setupInterceptor } from "./interceptor";
 import type { HandlerTools } from "./types";
 import type { HandlerDefinition } from "./configToDefinition";
 import normalizeUrl from "../vendor/normalize-url";
+import { partition } from "./utils";
 
 export let serverInstance: ReturnType<typeof create> | undefined;
 
@@ -25,7 +26,9 @@ const create = () => {
       requestLog.add({ request, handler, message });
     };
 
-    for (const handler of ActiveHandlers) {
+    const [persistentHandlers, standardHandlers] = partition(ActiveHandlers, (h) => h.persistent);
+
+    for (const handler of standardHandlers) {
       if (isHandlerMatching(handler, request, explain(handler))) {
         const response = buildResponse(handler);
 
@@ -33,6 +36,12 @@ const create = () => {
         HandledRequests.set(handler, request);
 
         return response;
+      }
+    }
+
+    for (const handler of persistentHandlers) {
+      if (isHandlerMatching(handler, request, explain(handler))) {
+        return buildResponse(handler);
       }
     }
 

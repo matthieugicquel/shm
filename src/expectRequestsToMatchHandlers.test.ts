@@ -140,3 +140,30 @@ it("multiple close requests", async () => {
     "
   `);
 });
+
+it("doesn't throw because of persistent handlers", async () => {
+  mockServer.get("/test", {
+    persistent: true,
+    response: { body },
+  });
+
+  await fetch("https://test.com/test");
+
+  expect(getThrownMessage()).toBeUndefined();
+});
+
+it("logs a persistent handler mismatch for an unhandled request", async () => {
+  mockServer.get("/test", {
+    persistent: true,
+    response: { body },
+  });
+
+  await fetch("https://test.com/test2");
+
+  expect(getThrownMessage()).toMatchInlineSnapshot(`
+    "SHM: Received requests did not match defined handlers
+    	UNHANDLED REQUEST: GET https://test.com/test2
+    	  --> handler GET https://test.com/test -> url /test !== /test2
+    "
+  `);
+});

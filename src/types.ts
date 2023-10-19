@@ -36,6 +36,16 @@ export type FullHandlerConfig<TResponse> = {
      */
     body?: TResponse;
   };
+  /**
+   * When true, the handler won't be "consumed" after matching one request, and will continue responding to matching requests
+   * Persistent handlers:
+   * - have a lower priority, even when defined before non-persistent handlers
+   * - are still reset by `expectRequestsToMatchHandlers` or `resetMockServers`, so they should probably be defined in a `beforEach`
+   * - won't fail tests if not consumed when using `expectRequestsToMatchHandlers`
+   *
+   * @default false
+   */
+  persistent?: boolean;
 };
 
 export type HandlerTools = {

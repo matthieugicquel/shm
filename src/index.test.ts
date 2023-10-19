@@ -248,3 +248,70 @@ describe("request assertions", () => {
     expect(await mock.getSentRequest()?.json()).toMatchObject(expectedBody);
   });
 });
+
+describe("persistent handlers", () => {
+  it("handles 3 matching requests", async () => {
+    mockServer.get("/test", {
+      persistent: true,
+      response: { body: expectedResponse },
+    });
+
+    const response1 = await fetch("https://test.com/test");
+    expect(await response1.json()).toEqual(expectedResponse);
+
+    const response2 = await fetch("https://test.com/test");
+
+    expect(await response2.json()).toEqual(expectedResponse);
+
+    const response3 = await fetch("https://test.com/test");
+
+    expect(await response3.json()).toEqual(expectedResponse);
+  });
+
+  it("gives priority to a non-persistent handler", async () => {
+    mockServer.get("/test", {
+      persistent: true,
+      response: { body: unexpectedResponse },
+    });
+
+    mockServer.get("/test", {
+      response: { body: expectedResponse },
+    });
+
+    const response1 = await fetch("https://test.com/test");
+    expect(await response1.json()).toEqual(expectedResponse);
+
+    const response2 = await fetch("https://test.com/test");
+
+    expect(await response2.json()).toEqual(unexpectedResponse);
+  });
+
+  it("gives priority to a non-persistent handler (reverse order)", async () => {
+    mockServer.get("/test", {
+      response: { body: expectedResponse },
+    });
+
+    mockServer.get("/test", {
+      persistent: true,
+      response: { body: unexpectedResponse },
+    });
+
+    const response1 = await fetch("https://test.com/test");
+    expect(await response1.json()).toEqual(expectedResponse);
+
+    const response2 = await fetch("https://test.com/test");
+
+    expect(await response2.json()).toEqual(unexpectedResponse);
+  });
+
+  it("is reset like a normal handler", async () => {
+    mockServer.get("/test", {
+      response: { body: unexpectedResponse },
+    });
+
+    resetMockServers();
+
+    const response = await fetch("https://test.com/test");
+    expect(response.status).toBe(404);
+  });
+});
