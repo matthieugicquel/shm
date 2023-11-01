@@ -63,7 +63,12 @@ const create = () => {
           const request = HandledRequests.get(fullConfig);
           if (!request) return undefined;
 
-          return await request.clone().json();
+          // We should probably rely on `Content-Type` headers instead of try/catching here
+          try {
+            return await request.clone().json();
+          } catch (jsonError) {
+            return await request.clone().text();
+          }
         },
         getSentRequest: () => {
           // Cloning to ensure no problems if it's called multiple times

@@ -51,8 +51,8 @@ export type FullHandlerConfig<TResponse> = {
 export type HandlerTools = {
   wasCalled: () => boolean;
   /**
-   * @returns The body of the request as a JSON object
-   * Will throw an error if the body is not JSON, use `getSentRequest` to get the raw body
+   * @returns The body of the request as a JSON object (if JSON-parseable) or as a string otherwise
+   * Use `getSentRequest` to get the body in another format
    */
   getSentBody: () => Promise<unknown>;
   /**

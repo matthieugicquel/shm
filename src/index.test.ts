@@ -235,7 +235,7 @@ describe("request assertions", () => {
     expect(mock.wasCalled()).toEqual(true);
   });
 
-  it("getSentBody ", async () => {
+  it("getSentBody - JSON", async () => {
     const mock = mockServer.post("/test", expectedResponse);
 
     expect(mock.getSentRequest()).toEqual(undefined);
@@ -245,7 +245,21 @@ describe("request assertions", () => {
       body: JSON.stringify(expectedBody),
     });
 
-    expect(await mock.getSentRequest()?.json()).toMatchObject(expectedBody);
+    expect(await mock.getSentBody()).toMatchObject(expectedBody);
+  });
+
+  it("getSentBody - text", async () => {
+    const stringBody = "some-string";
+    const mock = mockServer.post("/test", expectedResponse);
+
+    expect(mock.getSentRequest()).toEqual(undefined);
+
+    await fetch("https://test.com/test", {
+      method: "POST",
+      body: stringBody,
+    });
+
+    expect(await mock.getSentBody()).toEqual(stringBody);
   });
 });
 
