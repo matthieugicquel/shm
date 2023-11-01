@@ -9,9 +9,9 @@ yarn add --dev @matthieug/shm
 ```
 
 ```ts
-// `jest-setup.js` or equivalent
+// `jest-setupAfterEnv.js` or equivalent
 
-import { installInterceptor, expectRequestsToMatchHandlers } from "shm";
+import { installInterceptor, expectRequestsToMatchHandlers } from "@matthieug/shm";
 
 // Prevent all outgoing network requests -- Unhandled requests will be responded to with a 404
 installInterceptor();
@@ -26,9 +26,9 @@ Create your mock server:
 
 ```ts
 // `src/testing/mockServer.ts` or equivalent
-import { createMockServer } from "shm";
+import { createMockServer } from "@matthieug/shm";
 
-export const mockServer = createMockServer("https://shm.com");
+export const mockServer = createMockServer("https://test.com");
 ```
 
 Then use it in your tests:
@@ -62,7 +62,7 @@ mockServer.get<BodyType>("item", {
 // Check that the correct body was sent
 const mockHandler = mockServer.post("item", body)
 
-await fetch("https://shm.com/item", { method: "POST", body: requestBody });
+await fetch("https://test.com/item", { method: "POST", body: requestBody });
 
 expect(await mockHandler.getSentBody()).toEqual(requestBody);
 
@@ -91,12 +91,12 @@ Here's what the error output will look like:
 
 ```ts
 mockServer.get("hello", body);
-await fetch("https://shm.com/hallo");
+await fetch("https://test.com/hallo");
 
 expectRequestsToMatchHandlers();
 // SHM: Received requests did not match defined handlers
-//   UNHANDLED REQUEST: GET https://shm.com/hello
-//       --> handler GET https://shm.com/hallo -> url /hallo !== /hello
+//   UNHANDLED REQUEST: GET https://test.com/hello
+//       --> handler GET https://test.com/hallo -> url /hallo !== /hello
 ```
 
 ## MockServer API
@@ -109,7 +109,7 @@ This will install the interceptor if not yet installed.
 ```ts
 import { createMockServer } from "shm";
 
-export const mockServer = createMockServer("https://shm.com");
+export const mockServer = createMockServer("https://test.com");
 ```
 
 ### `mockServer.get` / `mockServer.post` / `mockServer.put` / ...
