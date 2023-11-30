@@ -158,8 +158,19 @@ const isHandlerMatching = (
 };
 
 const buildResponse = (handler: HandlerDefinition): Response => {
+  // TODO: we only handle string and JSON responses for now
+
+  if (typeof handler.response.body === "string") {
+    return new Response(handler.response.body, {
+      status: handler.response.status,
+    });
+  }
+
   return new Response(JSON.stringify(handler.response.body), {
     status: handler.response.status,
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 };
 

@@ -32,7 +32,7 @@ export type FullHandlerConfig<TResponse> = {
     status?: number;
     /**
      * The body a matching request will be responded with
-     * Currently, it goes through `JSON.stringify`, which means it must be a string or json-compatible JS object
+     * Currently, it must be a string or a JS object that can go through JSON.stringify
      */
     body?: TResponse;
   };

@@ -220,6 +220,24 @@ describe("response building", () => {
     expect(response.status).toEqual(201);
     expect(await response.text()).toEqual("");
   });
+
+  it("responds with JSON, set the application/json header", async () => {
+    mockServer.get("/test", expectedResponse);
+
+    const response = await fetch("https://test.com/test");
+
+    expect(response.headers.get("Content-Type")).toEqual("application/json");
+    expect(await response.json()).toEqual(expectedResponse);
+  });
+
+  it("responds with a string", async () => {
+    mockServer.get("/test", "hello string");
+
+    const response = await fetch("https://test.com/test");
+
+    expect(response.headers.get("Content-Type")).toEqual("text/plain;charset=UTF-8");
+    expect(await response.text()).toEqual("hello string");
+  });
 });
 
 describe("request assertions", () => {
