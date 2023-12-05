@@ -10,6 +10,7 @@ export type HandlerDefinition = {
    */
   url: string;
   persistent: boolean;
+  delayMs: number;
   response: {
     status: number;
     body: unknown | undefined;
@@ -36,6 +37,7 @@ export const configToDefinition = (params: {
 
   const baseDefinition = {
     persistent: false,
+    delayMs: 0,
     ...serverConfig,
     method,
     url,

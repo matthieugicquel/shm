@@ -1,4 +1,6 @@
-export const setupInterceptor = (handler: (request: Request) => Response | undefined) => {
+import { SetupInterceptor } from "./types";
+
+export const setupInterceptor: SetupInterceptor = (handler) => {
   let nextRequestId = -1; // using negative numbers to avoid collisions with RN's own requests
 
   const { Networking, getDevServerUrl, DeviceEventEmitter } = requireReactNativeModules();
@@ -48,7 +50,12 @@ export const setupInterceptor = (handler: (request: Request) => Response | undef
     return originalSendRequest(...args);
   };
 
-  const simulateResponse = async (requestId: number, response: Response) => {
+  const simulateResponse = async (
+    requestId: number,
+    responseWithDelay: Response | Promise<Response>,
+  ) => {
+    const response = await responseWithDelay;
+
     DeviceEventEmitter.emit("didReceiveNetworkResponse", [
       requestId,
       response.status,

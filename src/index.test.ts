@@ -1,5 +1,5 @@
 import axios from "axios";
-import { expect, it, describe, afterEach } from "vitest";
+import { expect, it, describe, afterEach, vi, beforeAll } from "vitest";
 
 import { createMockServer, resetMockServers } from "./index";
 
@@ -345,6 +345,31 @@ describe("persistent handlers", () => {
 
     const response = await fetch("https://test.com/test");
     expect(response.status).toBe(404);
+  });
+});
+
+describe("response delay", () => {
+  beforeAll(() => {
+    vi.useFakeTimers();
+    return vi.useRealTimers;
+  });
+
+  it("delays the response when specified", async () => {
+    mockServer.get("/test", {
+      delayMs: 1000,
+      response: { body: expectedResponse },
+    });
+
+    const responsePromise = fetch("https://test.com/test");
+
+    const resultBefore = await Promise.race([responsePromise, vi.advanceTimersByTimeAsync(999)]);
+
+    expect(resultBefore instanceof Response).toBe(false);
+
+    const resultAfter = await Promise.race([responsePromise, vi.advanceTimersByTimeAsync(2)]);
+
+    expect(resultAfter instanceof Response).toBe(true);
+    expect(await (resultAfter as Response).json()).toEqual(expectedResponse);
   });
 });
 

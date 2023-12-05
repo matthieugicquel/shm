@@ -20,7 +20,7 @@ const create = () => {
   const HandledRequests = new Map<HandlerDefinition, Request>();
   const MatchingLog = new Set<MatchingLogEntry>();
 
-  const dispose = setupInterceptor((request: Request): Response => {
+  const dispose = setupInterceptor((request) => {
     const requestLog = new Set<MatchingLogEntry>();
     const explain = (handler: HandlerDefinition) => (message: string) => {
       requestLog.add({ request, handler, message });
@@ -157,7 +157,16 @@ const isHandlerMatching = (
   return true;
 };
 
-const buildResponse = (handler: HandlerDefinition): Response => {
+const buildResponse = (handler: HandlerDefinition): Promise<Response> => {
+  const response = buildResponseForType(handler);
+
+  // Even when there the delay is 0, this very slight aysnchronicity makes tests a little more realistic
+  return new Promise<Response>((resolve) => {
+    setTimeout(() => resolve(response), handler.delayMs);
+  });
+};
+
+const buildResponseForType = (handler: HandlerDefinition): Response => {
   // TODO: we only handle string and JSON responses for now
 
   if (typeof handler.response.body === "string") {

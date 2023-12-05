@@ -2,8 +2,9 @@ import { BatchInterceptor } from "@mswjs/interceptors";
 import { ClientRequestInterceptor } from "@mswjs/interceptors/ClientRequest";
 import { FetchInterceptor } from "@mswjs/interceptors/fetch";
 import { XMLHttpRequestInterceptor } from "@mswjs/interceptors/XMLHttpRequest";
+import { SetupInterceptor } from "./types";
 
-export const setupInterceptor = (handler: (request: Request) => Response | undefined) => {
+export const setupInterceptor: SetupInterceptor = (handler) => {
   const interceptor = new BatchInterceptor({
     name: "shm",
     interceptors: [
@@ -15,9 +16,11 @@ export const setupInterceptor = (handler: (request: Request) => Response | undef
 
   interceptor.apply();
 
-  interceptor.on("request", ({ request }) => {
-    const response = handler(request);
-    if (response) request.respondWith(response);
+  interceptor.on("request", async ({ request }) => {
+    const responseWithDelay = handler(request);
+    if (responseWithDelay) {
+      request.respondWith(await responseWithDelay);
+    }
 
     // if we reach here, the request will passthrough
   });

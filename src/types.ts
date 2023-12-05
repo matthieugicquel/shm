@@ -46,6 +46,10 @@ export type FullHandlerConfig<TResponse> = {
    * @default false
    */
   persistent?: boolean;
+  /**
+   * Set to a positive number to delay the response by that many milliseconds
+   */
+  delayMs?: number;
 };
 
 export type HandlerTools = {
@@ -87,3 +91,7 @@ export const http_methods = [
 
 export type HttpMethod = (typeof HTTP_METHODS)[number];
 export type http_method = (typeof http_methods)[number];
+
+export type SetupInterceptor = (
+  handler: (request: Request) => Response | Promise<Response> | undefined,
+) => () => void;
