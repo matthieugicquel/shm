@@ -45,6 +45,6 @@
   },
   "dependencies": {
     "@mswjs/interceptors": "^0.25.6",
-    "regexparam": "^2.0.1"
+    "regexparam": "^3.0.0"
   }
 }
