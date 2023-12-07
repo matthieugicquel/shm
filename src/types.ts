@@ -75,6 +75,7 @@ export const HTTP_METHODS = [
   "OPTIONS",
   "TRACE",
   "PATCH",
+  "ALL", // Fake method to match all methods
 ] as const;
 
 export const http_methods = [
@@ -87,6 +88,7 @@ export const http_methods = [
   "options",
   "trace",
   "patch",
+  "all", // Fake method to match all methods
 ] as const;
 
 export type HttpMethod = (typeof HTTP_METHODS)[number];

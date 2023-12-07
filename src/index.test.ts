@@ -54,6 +54,25 @@ describe("baseUrl matching", () => {
   });
 });
 
+describe("method matching", () => {
+  it("matches the method", async () => {
+    mockServer.post("/test", unexpectedResponse);
+    mockServer.get("/test", expectedResponse);
+
+    const response = await fetch("https://test.com/test");
+
+    expect(await response.json()).toEqual(expectedResponse);
+  });
+
+  it("matches with the special `ALL` method", async () => {
+    mockServer.all("/test", expectedResponse);
+
+    const response = await fetch("https://test.com/test");
+
+    expect(await response.json()).toEqual(expectedResponse);
+  });
+});
+
 describe("url path matching", () => {
   it("matches the url", async () => {
     mockServer.get("/test", unexpectedResponse);

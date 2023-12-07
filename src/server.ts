@@ -103,7 +103,7 @@ const isHandlerMatching = (
   request: Request,
   explain: (message: string) => void,
 ) => {
-  if (handler.method !== request.method) {
+  if (handler.method !== "ALL" && handler.method !== request.method) {
     explain(`method ${handler.method} !== ${request.method}`);
 
     return false;
