@@ -118,10 +118,10 @@ const isHandlerMatching = (
     return false;
   }
 
-  const handlerUrlWithPathParams = regexparam.inject(
-    handlerUrl.pathname,
-    handler.request.pathParams,
-  );
+  const handlerUrlWithPathParams = regexparam.inject(handlerUrl.pathname, {
+    ...handler.request.pathParams,
+    "*": "*", // keep wildcards in the url
+  });
 
   const handlerRouteRegExp = regexparam.parse(handlerUrlWithPathParams).pattern;
 
@@ -160,7 +160,7 @@ const isHandlerMatching = (
 const buildResponse = (handler: HandlerDefinition): Promise<Response> => {
   const response = buildResponseForType(handler);
 
-  // Even when there the delay is 0, this very slight aysnchronicity makes tests a little more realistic
+  // Even when the delay is 0, this slight asynchronicity makes tests a little more realistic
   return new Promise<Response>((resolve) => {
     setTimeout(() => resolve(response), handler.delayMs);
   });

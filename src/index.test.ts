@@ -76,6 +76,14 @@ describe("url path matching", () => {
 
     expect(await response.json()).toEqual(expectedResponse);
   });
+
+  it("matches with wildcard", async () => {
+    mockServer.get("*", expectedResponse);
+
+    const response = await fetch("https://test.com/test");
+
+    expect(await response.json()).toEqual(expectedResponse);
+  });
 });
 
 describe("url path params matching", () => {
