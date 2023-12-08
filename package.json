@@ -1,6 +1,6 @@
 {
   "name": "@matthieug/shm",
-  "description": "Simple http mocking for tests",
+  "description": "Simple http mocking for unit tests in node, and react-native, with good developer experience",
   "homepage": "https://github.com/matthieugicquel/shm#readme",
   "repository": "github:matthieugicquel/shm",
   "bugs": {

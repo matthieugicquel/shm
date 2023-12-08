@@ -29,10 +29,14 @@ export type FullHandlerConfig<TResponse> = {
     searchParams?: Record<string, string>;
   };
   response?: {
+    /**
+     * An HTTP status code like 200, 404, 500, etc.
+     * @default 200
+     */
     status?: number;
     /**
      * The body a matching request will be responded with
-     * Currently, it must be a string or a JS object that can go through JSON.stringify
+     * Currently, it must be a string or a JS object that can go through `JSON.stringify`
      */
     body?: TResponse;
   };

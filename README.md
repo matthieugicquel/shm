@@ -1,6 +1,6 @@
 <h1 align="center">shm </h1>
 
-<p align="center">Simple http mocking for tests</p>
+<p align="center">Simple http mocking for unit tests in node, and react-native, with good developer experience</p>
 
 ## Installation
 
@@ -20,7 +20,7 @@ installInterceptor();
 afterEach(expectRequestsToMatchHandlers);
 ```
 
-## Usage
+## Usage in tests
 
 Create your mock server:
 
@@ -69,19 +69,41 @@ expect(await mockHandler.getSentBody()).toEqual(requestBody);
 // All usual http methods are supported with the same API
 ```
 
+## Usage in a React Native app
+
+> 🚧 Usage in a browser environment is not yet supported
+
+The API is the same, but there are a few additionnal options that you may want to use in this scenario:
+
+```ts
+import { createMockServer, uninstallInterceptor } from "@matthieug/shm";
+
+const mockServer = createMockServer("https://test.com", {
+  // options specified here will apply to all handlers
+  delayMs: 500, // view your loading states
+  persistent: true, // allow handlers to respond to multiple matching requests
+});
+
+// When you want to make real requests again
+uninstallInterceptor();
+```
+
 ## Setup APIs
 
 ### `installInterceptor()`
 
-Patch `fetch`, `XHR`, and the nodejs `http` module to intercept outgoing requests.
+Patch {`fetch`, `XHR`, `node:http`, `RCTNetworking`} to intercept outgoing requests.
 
-All requests will be responded to with a 404 error, unless a matching handler was defined.
+All requests will be responded to with a **404** error, unless a matching handler was defined.
 
-The interception is done with the great [@mswjs/interceptors](https://github.com/mswjs/interceptors) library.
+The interception is done:
+
+- with the great [@mswjs/interceptors](https://github.com/mswjs/interceptors) library for node and the browser
+- by [patching the `RCTNetworking` module](./src/interceptor.native.ts) for react-native
 
 ### `expectRequestsToMatchHandlers()`
 
-The recommended way to use it is in the `afterEach` hook of your test runner. It does 3 things:
+It is highly recommended to use this function in your tests by calling it in the `afterEach` hook of your test runner. It does 3 things:
 
 - reset the mock handlers, to **keep tests isolated**
 - throw an error if a handler was not consumed, to **enforce removal of the unused handlers** that could creep up as your code evolves
@@ -116,18 +138,18 @@ export const mockServer = createMockServer("https://test.com");
 
 Create a mock handler for a given http method and path.
 
-> [!IMPORTANT]
+> **⚠️ Important**
 >
-> - A handler will be used to respond to **1 (ONE)** matching request. After that, it's "consumed"
-> - handlers don't override each other (even with the same url), they are used in a first-in-first-out order
+> - A handler will be used to respond to **1 (ONE)** matching request. After that, it's "consumed" (unless you use the `persistent` option is used)
+> - handlers don't override each other (even with the same url), they are used in a _first-in-first-out_ order, except for handlers with a `persistent` option, which are used last
 
-You can use the one-line syntax for most of your mocks
+You can use the one-line syntax for most of your mocks:
 
 ```ts
 const mockHandler = mockServer.get<BodyType>("some-route", responseBody);
 ```
 
-And switch to the full options when needed
+And switch to the full options when needed:
 
 ```ts
 const mockHandler = mockServer.get<BodyType>("some-route/:id", {
@@ -138,11 +160,13 @@ const mockHandler = mockServer.get<BodyType>("some-route/:id", {
   response: {
     status: 418
     body: { message: "here is your mock" }
-  }
+  },
 })
 ```
 
-Have a look at the [type definition](./src/types.ts) for more details
+All usual http methods are available, you can also use `mockServer.all` to match any method.
+
+Have a look at the [type definition](./src/types.ts) for more details.
 
 ### `mockHandler.wasCalled`
 
