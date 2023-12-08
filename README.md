@@ -1,26 +1,27 @@
 <h1 align="center">shm </h1>
 
-<p align="center">Simple http mocking for unit tests in node, and react-native, with good developer experience</p>
+<p align="center"><i>Simple http mocking, with good developer experience</i></p>
 
-## Installation
+- [Use it tests](#usage-in-tests) - mock API calls in tests, with [good practices enforced](#why-this-package)
+- [Use it in React Native apps](#usage-in-a-react-native-app) - during development, or for a "demo mode"
+- [API docs](#api-documentation)
 
 ```bash
 yarn add --dev @matthieug/shm
 ```
 
+## Usage in tests
+
 ```ts
 // `jest-setupAfterEnv.js` or equivalent
-
 import { installInterceptor, expectRequestsToMatchHandlers } from "@matthieug/shm";
 
-// Prevent all outgoing network requests -- Unhandled requests will be responded to with a 404
+// Prevent all outgoing requests -- Unhandled requests will be responded to with a 404
 installInterceptor();
 
 // Fail tests when there are unhandled requests or unused handlers, and clear handlers
 afterEach(expectRequestsToMatchHandlers);
 ```
-
-## Usage in tests
 
 Create your mock server:
 
@@ -60,7 +61,7 @@ mockServer.get<BodyType>("item", {
 });
 
 // Check that the correct body was sent
-const mockHandler = mockServer.post("item", body)
+const mockHandler = mockServer.post("item", responseBody)
 
 await fetch("https://test.com/item", { method: "POST", body: requestBody });
 
@@ -71,7 +72,17 @@ expect(await mockHandler.getSentBody()).toEqual(requestBody);
 
 ## Usage in a React Native app
 
-> 🚧 Usage in a browser environment is not yet supported
+You'll need a polyfill:
+
+```sh
+yarn add react-native-url-polyfill
+```
+
+Import it in your app's entry point:
+
+```ts
+import "react-native-url-polyfill/auto";
+```
 
 The API is the same, but there are a few additionnal options that you may want to use in this scenario:
 
@@ -88,9 +99,11 @@ const mockServer = createMockServer("https://test.com", {
 uninstallInterceptor();
 ```
 
-## Setup APIs
+## API documentation
 
-### `installInterceptor()`
+### Setup APIs
+
+#### `installInterceptor()`
 
 Patch {`fetch`, `XHR`, `node:http`, `RCTNetworking`} to intercept outgoing requests.
 
@@ -101,9 +114,13 @@ The interception is done:
 - with the great [@mswjs/interceptors](https://github.com/mswjs/interceptors) library for node and the browser
 - by [patching the `RCTNetworking` module](./src/interceptor.native.ts) for react-native
 
-### `expectRequestsToMatchHandlers()`
+#### `expectRequestsToMatchHandlers()`
 
-It is highly recommended to use this function in your tests by calling it in the `afterEach` hook of your test runner. It does 3 things:
+```ts
+afterEach(expectRequestsToMatchHandlers);
+```
+
+Using it in your tests will:
 
 - reset the mock handlers, to **keep tests isolated**
 - throw an error if a handler was not consumed, to **enforce removal of the unused handlers** that could creep up as your code evolves
@@ -121,9 +138,9 @@ expectRequestsToMatchHandlers();
 //       --> handler GET https://test.com/hallo -> url /hallo !== /hello
 ```
 
-## MockServer API
+### `MockServer` API
 
-### `createMockerServer`
+#### `createMockerServer`
 
 Create a "mock server" instance for a given domain.
 This will install the interceptor if not yet installed.
@@ -134,14 +151,16 @@ import { createMockServer } from "shm";
 export const mockServer = createMockServer("https://test.com");
 ```
 
-### `mockServer.get` / `mockServer.post` / `mockServer.put` / ...
+#### `mockServer.get` / `mockServer.post` / `mockServer.put` / ... / `mockServer.all`
 
-Create a mock handler for a given http method and path.
+Create a mock handler for a given http method and url.
 
 > **⚠️ Important**
 >
-> - A handler will be used to respond to **1 (ONE)** matching request. After that, it's "consumed" (unless you use the `persistent` option is used)
-> - handlers don't override each other (even with the same url), they are used in a _first-in-first-out_ order, except for handlers with a `persistent` option, which are used last
+> - A handler will be used to respond to **1 (ONE)** matching request. After that, it's "consumed"
+> - handlers don't override each other, they are used in a _first-in-first-out_ order
+>
+> The `persistent` option is an exception to these rules but avoid using it too much in tests to [get the most](#why-this-package) out of this package.
 
 You can use the one-line syntax for most of your mocks:
 
@@ -164,11 +183,13 @@ const mockHandler = mockServer.get<BodyType>("some-route/:id", {
 })
 ```
 
-All usual http methods are available, you can also use `mockServer.all` to match any method.
+All usual http methods are available. You can also use `mockServer.all` to match any method.
 
-Have a look at the [type definition](./src/types.ts) for more details.
+Have a look at the [type definitions](./src/types.ts) for more details.
 
-### `mockHandler.wasCalled`
+### `MockHandler` API
+
+#### `mockHandler.wasCalled`
 
 Check that a request matching the mock handler was made.
 
@@ -182,7 +203,7 @@ This can be useful even if you're using the recommended setup with `expectReques
 - wait for the call to have been made
 - check that the call was made at the right time in a multi-step tests
 
-### `mockHandler.getSentBody`
+#### `mockHandler.getSentBody`
 
 Get the body that was received by the mock handler.
 
@@ -196,9 +217,31 @@ expect(await mockHandler.getSentBody()).toEqual(requestBody);
 
 There are great alternatives out there, like [msw](https://mswjs.io/) or [nock](https://github.com/nock/nock).
 
-This package provides a simpler API that may be enough for your use case, and promotes a certain way to define and use api mocks in tests.
+We aim to provide a simpler API that may be enough for your use case, and promote a certain way to define and use api mocks in tests.
 
 - **Enforce maintenance** of API mocks, by failing tests on unhandled requests and unused handlers
 - No way to write complex request matchers. Tests should **avoid conditionnals**, and this principle includes your mock definitions (otherwise you should write tests for your tests 🤔)
 - Check that your application code is sending the correct request (eg with `mock.getSentBody()`) through **assertions**, instead of by coincidentally definining the right handler
 - Prefer specifying the necessary mocks for each test, so that you **know at a glance what APIs your feature/component needs**
+
+## Supported platforms
+
+| Platform              | Status | Notes                                                           |
+| --------------------- | ------ | --------------------------------------------------------------- |
+| `node` with `jest`    | ✅     | node>=18 required                                               |
+| `node` with `vitest`  | ✅     | node>=18 required                                               |
+| `bun` with `bun test` | ⚠️     | test won't fail with `afterEach(expectRequestsToMatchHandlers)` |
+| react-native          | ✅     |                                                                 |
+| browser               | 🚧     | not yet supported                                               |
+
+## Support status
+
+While it's already in use in serious codebases™️, this package is still young so you'll probably encounter some problems.
+
+I don't plan to add lots of features, but I strive for very high quality. Don't hesitate to open an issue if you find a bug, or if the docs are unclear, or if an error message is not helpful.
+
+Here are some features that _are_ planned:
+
+- browser env support
+- a way to let unhandled request pass through
+- a better typing story
