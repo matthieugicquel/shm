@@ -23,6 +23,7 @@
   },
   "files": [
     "/dist/**/*.js",
+    "/dist/**/*.ts",
     "/dist/**/*.map"
   ],
   "engines": {
