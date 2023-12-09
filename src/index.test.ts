@@ -3,6 +3,8 @@ import { expect, it, describe, afterEach, vi, beforeAll } from "vitest";
 
 import { createMockServer, installInterceptor, resetMockServers } from ".";
 
+vi.useFakeTimers();
+
 installInterceptor();
 
 const mockServer = createMockServer("https://test.com");
@@ -378,11 +380,6 @@ describe("persistent handlers", () => {
 });
 
 describe("response delay", () => {
-  beforeAll(() => {
-    vi.useFakeTimers();
-    return vi.useRealTimers;
-  });
-
   it("delays the response when specified", async () => {
     mockServer.get("/test", {
       delayMs: 1000,

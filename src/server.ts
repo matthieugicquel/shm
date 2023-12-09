@@ -148,10 +148,12 @@ const isHandlerMatching = (
 const buildResponse = (handler: HandlerDefinition): Promise<Response> => {
   const response = buildResponseForType(handler);
 
-  // Even when the delay is 0, this slight asynchronicity makes tests a little more realistic
-  return new Promise<Response>((resolve) => {
-    setTimeout(() => resolve(response), handler.delayMs);
-  });
+  if (handler.delayMs > 0) {
+    return new Promise<Response>((resolve) => {
+      setTimeout(() => resolve(response), handler.delayMs);
+    });
+  }
+  return Promise.resolve(response);
 };
 
 const buildResponseForType = (handler: HandlerDefinition): Response => {
