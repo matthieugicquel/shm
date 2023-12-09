@@ -29,7 +29,7 @@
     "format": "prettier --write .",
     "build": "tsc",
     "prepublishOnly": "tsc",
-    "release": "bun install && np --no-cleanup",
+    "release": "bun install && rm -rf ./dist && np --no-cleanup",
     "test": "bun run vitest run && bun run test:types && bun run test:format",
     "test:unit": "vitest",
     "test:types": "tsc --noEmit",
