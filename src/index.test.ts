@@ -1,7 +1,9 @@
 import axios from "axios";
 import { expect, it, describe, afterEach, vi, beforeAll } from "vitest";
 
-import { createMockServer, resetMockServers } from "./index";
+import { createMockServer, installInterceptor, resetMockServers } from ".";
+
+installInterceptor();
 
 const mockServer = createMockServer("https://test.com");
 

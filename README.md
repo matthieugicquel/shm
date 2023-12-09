@@ -87,7 +87,9 @@ import "react-native-url-polyfill/auto";
 The API is the same, but there are a few additionnal options that you may want to use in this scenario:
 
 ```ts
-import { createMockServer, uninstallInterceptor } from "@matthieug/shm";
+import { installInterceptor, createMockServer, uninstallInterceptor } from "@matthieug/shm";
+
+installInterceptor();
 
 const mockServer = createMockServer("https://test.com", {
   // options specified here will apply to all handlers

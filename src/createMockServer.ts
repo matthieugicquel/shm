@@ -1,13 +1,19 @@
 import type { HandlerConfig, MockServer, HttpMethod, FullHandlerConfig } from "./types";
 import { http_methods } from "./types";
-import { createServerInstance, serverInstance } from "./server";
+import { serverInstance } from "./serverInstance";
 import { configToDefinition } from "./configToDefinition";
 
 export const createMockServer = (
   baseUrl: string,
   serverConfig: FullHandlerConfig<unknown> = {},
 ): MockServer => {
-  const { registerHandler } = serverInstance ?? createServerInstance();
+  if (!serverInstance) {
+    throw new Error(
+      "SHM interceptor not installed. Please call `installInterceptor()` before creating a mock server.",
+    );
+  }
+
+  const { registerHandler } = serverInstance;
 
   const methodSetters = http_methods.reduce((acc, method) => {
     return {

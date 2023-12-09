@@ -2,7 +2,7 @@ import { BatchInterceptor } from "@mswjs/interceptors";
 import { ClientRequestInterceptor } from "@mswjs/interceptors/ClientRequest";
 import { FetchInterceptor } from "@mswjs/interceptors/fetch";
 import { XMLHttpRequestInterceptor } from "@mswjs/interceptors/XMLHttpRequest";
-import { SetupInterceptor } from "./types";
+import { SetupInterceptor } from "../types";
 
 export const setupInterceptor: SetupInterceptor = (handler) => {
   const interceptor = new BatchInterceptor({

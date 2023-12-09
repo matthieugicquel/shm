@@ -1,7 +1,9 @@
 import { expect, it, afterEach } from "vitest";
 
-import { createMockServer, resetMockServers } from "./index";
+import { createMockServer, installInterceptor, resetMockServers } from ".";
 import { expectRequestsToMatchHandlers } from "./expectRequestsToMatchHandlers";
+
+installInterceptor();
 
 const mockServer = createMockServer("https://test.com");
 

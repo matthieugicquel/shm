@@ -4,6 +4,7 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "explorer.fileNesting.patterns": {
-    "*.ts": "${capture}.test.ts, ${capture}.test.ts.snap"
+    "*.ts": "${capture}.test.ts, ${capture}.test.ts.snap",
+    "index.ts": "index.*.ts"
   }
 }

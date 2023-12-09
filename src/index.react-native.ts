@@ -1,4 +1,4 @@
-import { setupInterceptor } from "./interceptors/node";
+import { setupInterceptor } from "./interceptors/RCTNetworking";
 import { createServerInstance } from "./serverInstance";
 
 export const installInterceptor = () => {

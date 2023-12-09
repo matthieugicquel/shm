@@ -1,20 +1,11 @@
 import * as regexparam from "regexparam";
 
-import { setupInterceptor } from "./interceptor";
-import type { HandlerTools } from "./types";
+import type { HandlerTools, SetupInterceptor } from "./types";
 import type { HandlerDefinition } from "./configToDefinition";
 import normalizeUrl from "../vendor/normalize-url";
 import { partition } from "./utils";
 
-export let serverInstance: ReturnType<typeof create> | undefined;
-
-export const createServerInstance = () => {
-  if (!serverInstance) serverInstance = create();
-
-  return serverInstance;
-};
-
-const create = () => {
+export const createServer = (setupInterceptor: SetupInterceptor) => {
   const ActiveHandlers = new Set<HandlerDefinition>();
   const UnhandledRequests = new Set<Request>();
   const HandledRequests = new Map<HandlerDefinition, Request>();
@@ -91,10 +82,7 @@ const create = () => {
 
       return summary;
     },
-    dispose: () => {
-      serverInstance = undefined;
-      dispose();
-    },
+    dispose: dispose,
   };
 };
 

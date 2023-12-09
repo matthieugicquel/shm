@@ -1,4 +1,4 @@
-import { serverInstance } from "./server";
+import { serverInstance } from "./serverInstance";
 
 export const expectRequestsToMatchHandlers = () => {
   if (!serverInstance) return;

@@ -1,4 +1,4 @@
-import { SetupInterceptor } from "./types";
+import { SetupInterceptor } from "../types";
 
 export const setupInterceptor: SetupInterceptor = (handler) => {
   let nextRequestId = -1; // using negative numbers to avoid collisions with RN's own requests
