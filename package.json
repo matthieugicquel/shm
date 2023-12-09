@@ -22,7 +22,8 @@
     }
   },
   "files": [
-    "/dist/**/*"
+    "/dist/**/*.js",
+    "/dist/**/*.map"
   ],
   "engines": {
     "node": ">=18"
