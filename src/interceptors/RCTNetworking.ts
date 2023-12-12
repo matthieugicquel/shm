@@ -15,7 +15,7 @@ export const setupInterceptor: SetupInterceptor = (handler) => {
       url,
       headers,
       data,
-      _responseType, // we could handle this
+      nativeResponseType,
       _incrementalUpdates, // we could handle this
       _timeout, // we should probably handle this
       callback,
@@ -42,7 +42,7 @@ export const setupInterceptor: SetupInterceptor = (handler) => {
 
     if (mockedResponse) {
       callback(requestId); // simulate "creating the request"
-      void simulateResponse(requestId, mockedResponse);
+      void simulateResponse(requestId, mockedResponse, nativeResponseType);
       return;
     }
 
@@ -53,6 +53,7 @@ export const setupInterceptor: SetupInterceptor = (handler) => {
   const simulateResponse = async (
     requestId: number,
     responseWithDelay: Response | Promise<Response>,
+    nativeResponseType: "text" | "blob" | "base64",
   ) => {
     const response = await responseWithDelay;
 
@@ -62,7 +63,16 @@ export const setupInterceptor: SetupInterceptor = (handler) => {
       Object.fromEntries(response.headers.entries()), // we may be loosing information for some edge cases here
       response.url,
     ]);
-    DeviceEventEmitter.emit("didReceiveNetworkData", [requestId, await response.text()]);
+
+    if (nativeResponseType === "blob") {
+      // @ts-expect-error: `Blob.data` is react-native specific -- https://github.com/facebook/react-native/blob/b6adbf760b79090cb1a849344802e0872c275991/packages/react-native/Libraries/Blob/Blob.js#L76
+      const blobData = (await response.blob()).data;
+      DeviceEventEmitter.emit("didReceiveNetworkData", [requestId, blobData]);
+    } else {
+      // `text` (supported) or `base64`, which may or may not work, need to find a usecase to test it
+      DeviceEventEmitter.emit("didReceiveNetworkData", [requestId, await response.text()]);
+    }
+
     DeviceEventEmitter.emit("didCompleteNetworkResponse", [requestId, undefined, false]);
   };
 
@@ -120,6 +130,10 @@ interface NetworkEventsEmitter {
   emit: <K extends keyof NetworkEvents>(event: K, args: NetworkEvents[K]) => void;
 }
 
+/**
+ * Original types: https://github.com/facebook/react-native/blob/main/packages/react-native/Libraries/Network/RCTNetworking.js.flow
+ * They seem to be far from a perfect match with reality
+ */
 type NetworkEvents = {
   didReceiveNetworkResponse: [
     requestId: number,
@@ -127,7 +141,7 @@ type NetworkEvents = {
     headers: Record<string, string>,
     responseURL: string | undefined,
   ];
-  didReceiveNetworkData: [requestId: number, responseText: string];
+  didReceiveNetworkData: [requestId: number, responseContent: string | unknown /* RN `BlobData` */];
   didCompleteNetworkResponse: [
     requestId: number,
     errorMessage: string | undefined,
@@ -141,7 +155,7 @@ type SendRequestFn = (
   url: string,
   headers: Record<string, string>,
   data: string,
-  responseType: "text" | "base64" | "blob",
+  nativeResponseType: "text" | "base64" | "blob",
   incrementalUpdates: boolean,
   timeout: number,
   callback: (requestId: number) => void,
