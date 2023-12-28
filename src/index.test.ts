@@ -1,7 +1,12 @@
 import axios from "axios";
 import { expect, it, describe, afterEach, vi, beforeAll } from "vitest";
 
-import { createMockServer, installInterceptor, resetMockServers } from ".";
+import {
+  createMockServer,
+  expectRequestsToMatchHandlers,
+  installInterceptor,
+  resetMockServers,
+} from ".";
 
 vi.useFakeTimers();
 
@@ -154,13 +159,13 @@ describe("url path params matching", () => {
 describe("url search params matching", () => {
   it("matches url search params when specified with the config", async () => {
     mockServer.get("/test", {
-      request: { searchParams: { id: "1" } },
-      response: { body: expectedResponse },
+      request: { searchParams: { id: "2" } },
+      response: { body: unexpectedResponse },
     });
 
     mockServer.get("/test", {
-      request: { searchParams: { id: "2" } },
-      response: { body: unexpectedResponse },
+      request: { searchParams: { id: "1" } },
+      response: { body: expectedResponse },
     });
 
     const response = await fetch("https://test.com/test?id=1");
@@ -228,6 +233,94 @@ describe("url search params matching", () => {
     const response = await fetch("https://test.com/test?id=hello");
 
     expect(response.status).toEqual(200);
+    expect(await response.json()).toEqual(expectedResponse);
+  });
+});
+
+describe("headers matching", () => {
+  it("matches a header", async () => {
+    mockServer.get("/test", {
+      request: { headers: { Authorization: "Bearer unexpected-token" } },
+      response: { body: unexpectedResponse },
+    });
+
+    mockServer.get("/test", {
+      request: { headers: { Authorization: "Bearer expected-token" } },
+      response: { body: expectedResponse },
+    });
+
+    const response = await fetch("https://test.com/test", {
+      headers: { Authorization: "Bearer expected-token" },
+    });
+
+    expect(await response.json()).toEqual(expectedResponse);
+  });
+
+  it("matches even when other headers are present in the request", async () => {
+    mockServer.get("/test", {
+      request: { headers: { Authorization: "Bearer expected-token" } },
+      response: { body: expectedResponse },
+    });
+
+    const response = await fetch("https://test.com/test", {
+      headers: {
+        Authorization: "Bearer expected-token",
+        "X-Other-Header": "hellothere",
+      },
+    });
+
+    expect(await response.json()).toEqual(expectedResponse);
+  });
+
+  it("ignores case in the header name", async () => {
+    mockServer.get("/test", {
+      request: { headers: { authorization: "Bearer expected-token" } },
+      response: { body: expectedResponse },
+    });
+
+    const response = await fetch("https://test.com/test", {
+      headers: { Authorization: "Bearer expected-token" },
+    });
+
+    expect(await response.json()).toEqual(expectedResponse);
+  });
+
+  it("matches even if the header is present multiple times", async () => {
+    mockServer.get("/test", {
+      request: { headers: { "Accept-Language": "fr-FR" } },
+      response: { body: expectedResponse },
+    });
+
+    const headers = new Headers();
+    headers.append("Accept-Language", "en-US");
+    headers.append("Accept-Language", "fr-FR");
+
+    const response = await fetch("https://test.com/test", {
+      headers,
+    });
+
+    expect(await response.json()).toEqual(expectedResponse);
+  });
+
+  it("matches multiple header values", async () => {
+    mockServer.get("/test", {
+      request: { headers: { Accept: "application/json, */*" } },
+      response: { body: unexpectedResponse },
+    });
+
+    mockServer.get("/test", {
+      request: { headers: { Accept: "application/json, text/plain" } },
+      response: { body: expectedResponse },
+    });
+
+    const headers = new Headers();
+    headers.append("Accept", "text/plain");
+    headers.append("Accept", "application/json");
+
+    const response = await fetch("https://test.com/test", {
+      headers,
+    });
+
     expect(await response.json()).toEqual(expectedResponse);
   });
 });

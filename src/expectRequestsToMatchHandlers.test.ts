@@ -115,6 +115,38 @@ it("pathParam mismatch -> param missing in request", async () => {
   `);
 });
 
+it("header mismatch -> present but wrong value", async () => {
+  mockServer.get("/test", {
+    request: { headers: { "x-test": "hello" } },
+    response: { body },
+  });
+
+  await fetch("https://test.com/test", { headers: { "x-test": "halo" } });
+
+  expect(getThrownMessage()).toMatchInlineSnapshot(`
+    "SHM: Received requests did not match defined handlers
+    	UNHANDLED REQUEST: GET https://test.com/test
+    	  --> handler GET https://test.com/test -> header \\"x-test\\" -> \\"hello\\" !== \\"halo\\"
+    "
+  `);
+});
+
+it("header mismatch -> missing in request", async () => {
+  mockServer.get("/test", {
+    request: { headers: { "x-test": "hello" } },
+    response: { body },
+  });
+
+  await fetch("https://test.com/test");
+
+  expect(getThrownMessage()).toMatchInlineSnapshot(`
+    "SHM: Received requests did not match defined handlers
+    	UNHANDLED REQUEST: GET https://test.com/test
+    	  --> handler GET https://test.com/test -> header \\"x-test\\" -> expected by handler but absent in request
+    "
+  `);
+});
+
 it("multiple close requests", async () => {
   mockServer.get("/test", {
     request: { searchParams: { id: "hello" } },

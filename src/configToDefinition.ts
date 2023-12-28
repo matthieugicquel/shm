@@ -18,6 +18,7 @@ export type HandlerDefinition = {
   request: {
     pathParams: Record<string, string>;
     searchParams: Record<string, string> | undefined;
+    headers: Record<string, string>;
   };
 };
 
@@ -44,6 +45,7 @@ export const configToDefinition = (params: {
     request: {
       pathParams: {},
       searchParams: undefined,
+      headers: {},
       ...serverConfig.request,
     },
     response: {

@@ -27,6 +27,15 @@ export type FullHandlerConfig<TResponse> = {
      *
      */
     searchParams?: Record<string, string>;
+    /**
+     * Specify headers that must be present in a request to match
+     * Extra headers in the request will not cause a mismatch
+     * Extra values for a given header will not cause a mismatch (eg `Accept: application/json` will match `Accept: application/json, text/plain`)
+     *
+     * @example // match "Accept: application/json"
+     * mockServer.get("/test", { request: { headers: { Accept: "application/json" } } })
+     */
+    headers?: Record<string, string>;
   };
   response?: {
     /**

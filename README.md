@@ -60,6 +60,12 @@ mockServer.get<BodyType>("item", {
   response: { body }
 });
 
+// Match headers -- a request must contain *at least* the specified headers to match
+mockServer.get<BodyType>("item", {
+  request: { headers: { Authoriztion: "Bearer some-token" }}
+  response: { body }
+});
+
 // Check that the correct body was sent
 const mockHandler = mockServer.post("item", responseBody)
 
@@ -177,6 +183,7 @@ const mockHandler = mockServer.get<BodyType>("some-route/:id", {
   request: {
     pathParams: { id: "1" }
     searchParams: { lang: "fr" }
+    headers: { Authorization: "Bearer some-token" }
   },
   response: {
     status: 418

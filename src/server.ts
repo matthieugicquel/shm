@@ -142,6 +142,27 @@ const isHandlerMatching = (
     }
   }
 
+  for (const [key, handlerHeader] of Object.entries(handler.request.headers)) {
+    const requestHeader = request.headers.get(key);
+
+    if (!requestHeader) {
+      explain(`header "${key}" -> expected by handler but absent in request`);
+
+      return false;
+    }
+
+    const handlerHeaderValues = handlerHeader.split(",").map((v) => v.trim());
+    const requestHeaderValues = requestHeader.split(",").map((v) => v.trim());
+
+    for (const handlerHeaderValue of handlerHeaderValues) {
+      if (!requestHeaderValues.includes(handlerHeaderValue)) {
+        explain(`header "${key}" -> "${handlerHeaderValue}" !== "${requestHeader}"`);
+
+        return false;
+      }
+    }
+  }
+
   return true;
 };
 
