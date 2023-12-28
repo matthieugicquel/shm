@@ -1,4 +1,4 @@
-<h1 align="center">shm </h1>
+<h1 align="center">shm</h1>
 
 <p align="center"><i>Simple http mocking, with good developer experience</i></p>
 
@@ -228,13 +228,14 @@ We aim to provide a simpler API that may be enough for your use case, and promot
 
 ## Supported platforms
 
-| Platform              | Status | Notes                                                           |
-| --------------------- | ------ | --------------------------------------------------------------- |
-| `node` with `jest`    | ✅     | node>=18 required                                               |
-| `node` with `vitest`  | ✅     | node>=18 required                                               |
-| `bun` with `bun test` | ⚠️     | test won't fail with `afterEach(expectRequestsToMatchHandlers)` |
-| react-native          | ✅     |                                                                 |
-| browser               | 🚧     | not yet supported                                               |
+| Platform                  | Status | Notes                                                                                                               |
+| ------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------- |
+| `node` / `jest`           | ✅     | node>=18 required                                                                                                   |
+| `node` / `jest` / `jsdom` | ⚠️     | [Custom setup required](https://mswjs.io/docs/migrations/1.x-to-2.x#requestresponsetextencoder-is-not-defined-jest) |
+| `node` / `vitest`         | ✅     | node>=18 required                                                                                                   |
+| `bun` with `bun test`     | ⚠️     | test won't fail with `afterEach(expectRequestsToMatchHandlers)`                                                     |
+| react-native              | ✅     |                                                                                                                     |
+| browser                   | 🚧     | not yet supported                                                                                                   |
 
 ## Support status
 
