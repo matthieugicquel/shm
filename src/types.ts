@@ -37,18 +37,20 @@ export type FullHandlerConfig<TResponse> = {
      */
     headers?: Record<string, string>;
   };
-  response?: {
-    /**
-     * An HTTP status code like 200, 404, 500, etc.
-     * @default 200
-     */
-    status?: number;
-    /**
-     * The body a matching request will be responded with
-     * Currently, it must be a string or a JS object that can go through `JSON.stringify`
-     */
-    body?: TResponse;
-  };
+  response?:
+    | {
+        /**
+         * An HTTP status code like 200, 404, 500, etc.
+         * @default 200
+         */
+        status?: number;
+        /**
+         * The body a matching request will be responded with
+         * Currently, it must be a string or a JS object that can go through `JSON.stringify`
+         */
+        body?: TResponse;
+      }
+    | "network-error";
   /**
    * When true, the handler won't be "consumed" after matching one request, and will continue responding to matching requests
    * Persistent handlers:

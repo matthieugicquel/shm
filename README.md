@@ -194,6 +194,14 @@ const mockHandler = mockServer.get<BodyType>("some-route/:id", {
 
 All usual http methods are available. You can also use `mockServer.all` to match any method.
 
+You can also simulate network errors:
+
+```ts
+const mockHandler = mockServer.get<BodyType>("some-route", {
+  response: "network-error",
+});
+```
+
 Have a look at the [type definitions](./src/types.ts) for more details.
 
 ### `MockHandler` API

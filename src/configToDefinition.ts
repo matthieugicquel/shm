@@ -11,10 +11,12 @@ export type HandlerDefinition = {
   url: string;
   persistent: boolean;
   delayMs: number;
-  response: {
-    status: number;
-    body: unknown | undefined;
-  };
+  response:
+    | {
+        status: number;
+        body: unknown | undefined;
+      }
+    | "network-error";
   request: {
     pathParams: Record<string, string>;
     searchParams: Record<string, string> | undefined;
@@ -48,11 +50,7 @@ export const configToDefinition = (params: {
       headers: {},
       ...serverConfig.request,
     },
-    response: {
-      status: 200,
-      body: undefined,
-      ...serverConfig.response,
-    },
+    response: fromResponseConfigToDefinition({}, serverConfig.response),
   };
 
   if (isFullHandlerConfig(config)) {
@@ -63,19 +61,37 @@ export const configToDefinition = (params: {
         ...baseDefinition.request,
         ...config.request,
       },
-      response: {
-        ...baseDefinition.response,
-        ...config.response,
-      },
+      response: fromResponseConfigToDefinition(baseDefinition.response, config.response),
     };
   }
 
   return {
     ...baseDefinition,
-    response: {
-      ...baseDefinition.response,
-      body: config,
-    },
+    response: fromResponseConfigToDefinition(baseDefinition.response, { body: config }),
+  };
+};
+
+const fromResponseConfigToDefinition = (
+  baseResponse: FullHandlerConfig<unknown>["response"],
+  response: FullHandlerConfig<unknown>["response"],
+) => {
+  if (response === "network-error") {
+    return response;
+  }
+
+  if (baseResponse === "network-error") {
+    return {
+      status: 200,
+      body: undefined,
+      ...response,
+    };
+  }
+
+  return {
+    status: 200,
+    body: undefined,
+    ...baseResponse,
+    ...response,
   };
 };
 

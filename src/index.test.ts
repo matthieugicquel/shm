@@ -362,6 +362,12 @@ describe("response building", () => {
     expect(response.headers.get("Content-Type")).toEqual("text/plain;charset=UTF-8");
     expect(await response.text()).toEqual("hello string");
   });
+
+  it("responds with a network error", async () => {
+    mockServer.get("/test", { response: "network-error" });
+
+    expect(fetch("https://test.com/test")).rejects.toThrow(TypeError);
+  });
 });
 
 describe("request assertions", () => {

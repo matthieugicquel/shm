@@ -179,6 +179,9 @@ const buildResponse = (handler: HandlerDefinition): Promise<Response> => {
 
 const buildResponseForType = (handler: HandlerDefinition): Response => {
   // TODO: we only handle string and JSON responses for now
+  if (handler.response === "network-error") {
+    return Response.error();
+  }
 
   if (typeof handler.response.body === "string") {
     return new Response(handler.response.body, {
