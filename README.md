@@ -42,7 +42,7 @@ mockServer.get<BodyType>("some-route", body);
 
 // Or full syntax for more control
 mockServer.get<BodyType>("some-route", {
-  response: { body, statusCode: 401 }
+  response: { body, status: 401 }
 });
 
 // Match any path param value
