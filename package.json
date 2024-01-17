@@ -12,11 +12,13 @@
     "email": "matthieug@bam.tech"
   },
   "license": "MIT",
-  "main": "./dist/src/index.js",
   "react-native": "./dist/src/index.react-native.js",
+  "browser": "./dist/src/index.browser.js",
+  "main": "./dist/src/index.js",
   "exports": {
     ".": {
       "types": "./dist/src/index.d.ts",
+      "react-native": "./dist/src/index.react-native.js",
       "browser": "./dist/src/index.browser.js",
       "default": "./dist/src/index.js"
     }
