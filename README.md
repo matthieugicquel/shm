@@ -78,19 +78,25 @@ expect(await mockHandler.getSentBody()).toEqual(requestBody);
 
 ## Usage in a React Native app
 
-You'll need a polyfill:
+### Required polyfills
+
+If you're using **Expo SDK >= 50**, you can skip this section.
+
+Otherwise (older expo, React Native without expo) you'll need a polyfill:
 
 ```sh
 yarn add react-native-url-polyfill
 ```
 
-Import it in your app's entry point:
+Import it in your app's entry point (`index.js`, `App.js`,`App.tsx`, ...):
 
 ```ts
 import "react-native-url-polyfill/auto";
 ```
 
-The API is the same, but there are a few additionnal options that you may want to use in this scenario:
+### Usage
+
+The API is the same as in tests, but there are a few additionnal options that you may want to use in this scenario:
 
 ```ts
 import { installInterceptor, createMockServer, uninstallInterceptor } from "@matthieug/shm";
