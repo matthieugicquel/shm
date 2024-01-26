@@ -2,8 +2,8 @@
 
 <p align="center"><i>Simple http mocking, with good developer experience</i></p>
 
-- [Use it tests](#usage-in-tests-🧪) - mock API calls, with [good practices enforced](#whats-different-from-other-http-mocking-libraries)
-- [Use it in the browser or React Native apps](#usage-in-an-app-📱🖥️) - during development, or for a "demo mode"
+- [Use it tests 🧪](#usage-in-tests) - mock API calls, with [good practices enforced](#whats-different-from-other-http-mocking-libraries)
+- [Use it in the browser 🖥️ or React Native apps 📱](#usage-in-an-app) - during development, or for a "demo mode"
 
 ---
 
@@ -14,11 +14,11 @@ yarn add --dev @matthieug/shm
 | Platform                  | Status | Notes                                                                                                            |
 | ------------------------- | ------ | ---------------------------------------------------------------------------------------------------------------- |
 | `node` / `jest`           | ✅     | node>=18 required                                                                                                |
-| `node` / `jest` / `jsdom` | 🧑‍💻     | [Polyfills required](https://mswjs.io/docs/migrations/1.x-to-2.x#requestresponsetextencoder-is-not-defined-jest) |
+| `node` / `jest` / `jsdom` | ✅     | [Polyfills required](https://mswjs.io/docs/migrations/1.x-to-2.x#requestresponsetextencoder-is-not-defined-jest) |
 | `node` / `vitest`         | ✅     | node>=18 required                                                                                                |
 | `bun` with `bun test`     | ⚠️     | test won't fail with `afterEach(expectRequestsToMatchHandlers)`                                                  |
 | `expo`                    | ✅     | Install [react-native-url-polyfill](https://github.com/charpeni/react-native-url-polyfill) if using SDK < 50     |
-| `react-native`            | 🧑‍💻     | Install [react-native-url-polyfill](https://github.com/charpeni/react-native-url-polyfill)                       |
+| `react-native`            | ✅     | Install [react-native-url-polyfill](https://github.com/charpeni/react-native-url-polyfill)                       |
 | browser                   | ✅     |                                                                                                                  |
 
 ## Basic usage
@@ -55,7 +55,12 @@ mockServer.get<BodyType>("item/:id", {
 
 Have a look at the [type definitions](./src/types.ts) for more details.
 
-## Usage in tests 🧪
+**Important notes:**
+
+- Handlers will by default only respond to **ONE** matching request. After that, they will be "consumed"
+- Handlers are used in a _first_in_first_out_ order
+
+## Usage in tests
 
 ### Setup
 
@@ -135,7 +140,7 @@ We want to promote a certain way to define and use api mocks in tests, and provi
 - Check that your code is sending the correct request through **assertions**, instead of by coincidentally definining the right handler
 - Prefer specifying the necessary mocks for each test, so that you **know at a glance what APIs your feature/component needs**
 
-## Usage in an app 📱🖥️
+## Usage in an app
 
 ```ts
 import { installInterceptor, createMockServer, uninstallInterceptor } from "@matthieug/shm";
