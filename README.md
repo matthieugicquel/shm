@@ -158,25 +158,7 @@ const mockServer = createMockServer("https://test.com", {
 uninstallInterceptor();
 ```
 
-### Browser setup
-
-No special setup required.
-
-### React Native setup
-
-If you're using **Expo SDK >= 50**, you can skip this section.
-
-Otherwise (older expo, React Native without expo) you'll need a polyfill:
-
-```sh
-yarn add react-native-url-polyfill
-```
-
-Import it in your app's entry point (`index.js`, `App.js`,`App.tsx`, ...):
-
-```ts
-import "react-native-url-polyfill/auto";
-```
+All the [basic APIs](#basic-usage) are available.
 
 ## Future plans
 
