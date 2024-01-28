@@ -2,7 +2,7 @@
 
 <p align="center"><i>Simple http mocking, with good developer experience</i></p>
 
-- [Use it tests 🧪](#usage-in-tests) - mock API calls, with [good practices enforced](#whats-different-from-other-http-mocking-libraries)
+- [Use it in tests 🧪](#usage-in-tests) - mock API calls, with [good practices enforced](#whats-different-from-other-http-mocking-libraries)
 - [Use it in the browser 🖥️ or React Native apps 📱](#usage-in-an-app) - during development, or for a "demo mode"
 
 ---
