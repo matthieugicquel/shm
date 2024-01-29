@@ -1,12 +1,7 @@
 import axios from "axios";
-import { expect, it, describe, afterEach, vi, beforeAll } from "vitest";
+import { expect, it, describe, afterEach, vi } from "vitest";
 
-import {
-  createMockServer,
-  expectRequestsToMatchHandlers,
-  installInterceptor,
-  resetMockServers,
-} from ".";
+import { createMockServer, installInterceptor, resetMockServers } from ".";
 
 vi.useFakeTimers();
 
@@ -296,7 +291,7 @@ describe("headers matching", () => {
     headers.append("Accept-Language", "fr-FR");
 
     const response = await fetch("https://test.com/test", {
-      headers,
+      headers: headers as HeadersInit, // There's a conflict between bun and node types here
     });
 
     expect(await response.json()).toEqual(expectedResponse);
@@ -318,7 +313,7 @@ describe("headers matching", () => {
     headers.append("Accept", "application/json");
 
     const response = await fetch("https://test.com/test", {
-      headers,
+      headers: headers as HeadersInit, // There's a conflict between bun and node types here
     });
 
     expect(await response.json()).toEqual(expectedResponse);

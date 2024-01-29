@@ -63,7 +63,7 @@ it("searchParam mismatch -> present but wrong value", async () => {
   expect(getThrownMessage()).toMatchInlineSnapshot(`
     "SHM: Received requests did not match defined handlers
     	UNHANDLED REQUEST: GET https://test.com/test?id=helo
-    	  --> handler GET https://test.com/test -> searchParam \\"id\\" -> \\"hello\\" !== \\"helo\\"
+    	  --> handler GET https://test.com/test -> searchParam "id" -> "hello" !== "helo"
     "
   `);
 });
@@ -79,7 +79,7 @@ it("searchParam mismatch -> param missing in request", async () => {
   expect(getThrownMessage()).toMatchInlineSnapshot(`
     "SHM: Received requests did not match defined handlers
     	UNHANDLED REQUEST: GET https://test.com/test
-    	  --> handler GET https://test.com/test -> searchParam \\"id\\" -> expected by handler but absent in request
+    	  --> handler GET https://test.com/test -> searchParam "id" -> expected by handler but absent in request
     "
   `);
 });
@@ -126,7 +126,7 @@ it("header mismatch -> present but wrong value", async () => {
   expect(getThrownMessage()).toMatchInlineSnapshot(`
     "SHM: Received requests did not match defined handlers
     	UNHANDLED REQUEST: GET https://test.com/test
-    	  --> handler GET https://test.com/test -> header \\"x-test\\" -> \\"hello\\" !== \\"halo\\"
+    	  --> handler GET https://test.com/test -> header "x-test" -> "hello" !== "halo"
     "
   `);
 });
@@ -142,7 +142,7 @@ it("header mismatch -> missing in request", async () => {
   expect(getThrownMessage()).toMatchInlineSnapshot(`
     "SHM: Received requests did not match defined handlers
     	UNHANDLED REQUEST: GET https://test.com/test
-    	  --> handler GET https://test.com/test -> header \\"x-test\\" -> expected by handler but absent in request
+    	  --> handler GET https://test.com/test -> header "x-test" -> expected by handler but absent in request
     "
   `);
 });
@@ -168,8 +168,8 @@ it("multiple close requests", async () => {
   expect(getThrownMessage()).toMatchInlineSnapshot(`
     "SHM: Received requests did not match defined handlers
     	UNHANDLED REQUEST: GET https://test.com/test?id=helo
-    	  --> handler GET https://test.com/test -> searchParam \\"id\\" -> \\"hello\\" !== \\"helo\\"
-    	  --> handler GET https://test.com/test -> searchParam \\"id2\\" -> expected by handler but absent in request
+    	  --> handler GET https://test.com/test -> searchParam "id" -> "hello" !== "helo"
+    	  --> handler GET https://test.com/test -> searchParam "id2" -> expected by handler but absent in request
     	  --> handler GET https://test.com/test2 -> url /test2 !== /test
     "
   `);
