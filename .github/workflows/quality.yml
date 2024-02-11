@@ -30,4 +30,8 @@ jobs:
         run: bun run test:format
 
       - name: Vitest
-        run: yarn test:unit
+        run: bun run test:unit
+
+      - name: TypeScript (tester-react-native)
+        working-directory: ./tester-react-native
+        run: bun run test:types
