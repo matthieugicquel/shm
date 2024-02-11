@@ -16,7 +16,7 @@
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
-    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo"
+    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
   },
-  "include": ["./src", "./vendor"]
+  "include": ["./src", "./vendor"],
 }
