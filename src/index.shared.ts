@@ -1,6 +1,6 @@
 import { ServerSingleton } from "./singleton";
 
-export { createMockServer } from "./createMockServer";
+export { createRestServer as createMockServer } from "./rest";
 
 export { expectRequestsToMatchHandlers } from "./expectRequestsToMatchHandlers";
 

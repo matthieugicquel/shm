@@ -1,26 +1,22 @@
-import * as regexparam from "regexparam";
-
-import type { HandlerTools, SetupInterceptor } from "./types";
-import type { HandlerDefinition } from "./configToDefinition";
-import normalizeUrl from "../vendor/normalize-url";
+import type { Handler, HandlerTools, SetupInterceptor } from "./types";
 import { partition } from "./utils";
 
 export const createServer = (setupInterceptor: SetupInterceptor) => {
-  const ActiveHandlers = new Set<HandlerDefinition>();
+  const ActiveHandlers = new Set<Handler>();
   const UnhandledRequests = new Set<Request>();
-  const HandledRequests = new Map<HandlerDefinition, Request>();
+  const HandledRequests = new Map<Handler, Request>();
   const MatchingLog = new Set<MatchingLogEntry>();
 
   const dispose = setupInterceptor((request) => {
     const requestLog = new Set<MatchingLogEntry>();
-    const explain = (handler: HandlerDefinition) => (message: string) => {
+    const explain = (handler: Handler) => (message: string) => {
       requestLog.add({ request, handler, message });
     };
 
     const [persistentHandlers, standardHandlers] = partition(ActiveHandlers, (h) => h.persistent);
 
     for (const handler of standardHandlers) {
-      if (isHandlerMatching(handler, request, explain(handler))) {
+      if (handler.isMatching(request, explain(handler))) {
         const response = buildResponse(handler);
 
         ActiveHandlers.delete(handler);
@@ -31,7 +27,7 @@ export const createServer = (setupInterceptor: SetupInterceptor) => {
     }
 
     for (const handler of persistentHandlers) {
-      if (isHandlerMatching(handler, request, explain(handler))) {
+      if (handler.isMatching(request, explain(handler))) {
         return buildResponse(handler);
       }
     }
@@ -43,7 +39,7 @@ export const createServer = (setupInterceptor: SetupInterceptor) => {
   });
 
   return {
-    registerHandler: (fullConfig: HandlerDefinition): HandlerTools => {
+    registerHandler: (fullConfig: Handler): HandlerTools => {
       ActiveHandlers.add(fullConfig);
 
       return {
@@ -86,88 +82,8 @@ export const createServer = (setupInterceptor: SetupInterceptor) => {
   };
 };
 
-const isHandlerMatching = (
-  handler: HandlerDefinition,
-  request: Request,
-  explain: (message: string) => void,
-) => {
-  if (handler.method !== "ALL" && handler.method !== request.method) {
-    explain(`method ${handler.method} !== ${request.method}`);
-
-    return false;
-  }
-
-  const handlerUrl = new URL(handler.url);
-  const requestUrl = new URL(normalizeUrl(request.url));
-
-  if (handlerUrl.origin !== requestUrl.origin) {
-    explain(`origin ${handlerUrl.origin} !== ${requestUrl.origin}`);
-
-    return false;
-  }
-
-  const handlerUrlWithPathParams = regexparam.inject(handlerUrl.pathname, {
-    ...handler.request.pathParams,
-    "*": "*", // keep wildcards in the url
-  });
-
-  const handlerRouteRegExp = regexparam.parse(handlerUrlWithPathParams).pattern;
-
-  if (!handlerRouteRegExp.test(requestUrl.pathname)) {
-    explain(`url ${handlerUrlWithPathParams} !== ${requestUrl.pathname}`);
-
-    return false;
-  }
-
-  // We're not handling properly the case where the same searchParam key is specified multiple times. Should we?
-  const searchParamsInHandlerUrl = Object.fromEntries(handlerUrl.searchParams.entries());
-
-  const handlerSearchParams = Object.entries({
-    ...searchParamsInHandlerUrl,
-    ...handler.request.searchParams,
-  });
-
-  for (const [key, value] of handlerSearchParams) {
-    const requestParam = requestUrl.searchParams.get(key);
-    if (!requestParam) {
-      explain(`searchParam "${key}" -> expected by handler but absent in request`);
-
-      return false;
-    }
-
-    if (requestParam !== value) {
-      explain(`searchParam "${key}" -> "${value}" !== "${requestParam}"`);
-
-      return false;
-    }
-  }
-
-  for (const [key, handlerHeader] of Object.entries(handler.request.headers)) {
-    const requestHeader = request.headers.get(key);
-
-    if (!requestHeader) {
-      explain(`header "${key}" -> expected by handler but absent in request`);
-
-      return false;
-    }
-
-    const handlerHeaderValues = handlerHeader.split(",").map((v) => v.trim());
-    const requestHeaderValues = requestHeader.split(",").map((v) => v.trim());
-
-    for (const handlerHeaderValue of handlerHeaderValues) {
-      if (!requestHeaderValues.includes(handlerHeaderValue)) {
-        explain(`header "${key}" -> "${handlerHeaderValue}" !== "${requestHeader}"`);
-
-        return false;
-      }
-    }
-  }
-
-  return true;
-};
-
-const buildResponse = (handler: HandlerDefinition): Promise<Response> => {
-  const response = buildResponseForType(handler);
+const buildResponse = (handler: Handler): Promise<Response> => {
+  const response = handler.buildResponse();
 
   if (handler.delayMs > 0) {
     return new Promise<Response>((resolve) => {
@@ -177,25 +93,8 @@ const buildResponse = (handler: HandlerDefinition): Promise<Response> => {
   return Promise.resolve(response);
 };
 
-const buildResponseForType = (handler: HandlerDefinition): Response => {
-  // TODO: we only handle string and JSON responses for now
-
-  if (typeof handler.response.body === "string") {
-    return new Response(handler.response.body, {
-      status: handler.response.status,
-    });
-  }
-
-  return new Response(JSON.stringify(handler.response.body), {
-    status: handler.response.status,
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-};
-
 type MatchingLogEntry = {
-  handler: HandlerDefinition;
+  handler: Handler;
   request: Request;
   message: string;
 };

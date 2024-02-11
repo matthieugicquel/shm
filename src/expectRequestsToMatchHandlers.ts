@@ -8,12 +8,12 @@ export const expectRequestsToMatchHandlers = () => {
   if (unhandledRequests.length > 0) {
     const message = [
       "SHM: Received requests did not match defined handlers",
-      ...unhandledRequests.flatMap((r) => [
+      ...unhandledRequests.flatMap<string>((r) => [
         `\tUNHANDLED REQUEST: ${r.method} ${r.url}`,
         ...matchingLog
           .filter((l) => l.request === r)
           .map((l) => {
-            return `\t  --> handler ${l.handler.method} ${l.handler.url} -> ${l.message}`;
+            return `\t  --> handler ${l.handler.getDescription()} -> ${l.message}`;
           }),
       ]),
     ].join("\n");
@@ -26,9 +26,9 @@ export const expectRequestsToMatchHandlers = () => {
   if (relevantActiveHandlers.length > 0) {
     const message = [
       "SHM: Received requests did not match defined handlers",
-      ...relevantActiveHandlers.flatMap((h) => {
+      ...relevantActiveHandlers.flatMap<string>((h) => {
         return [
-          `\tUNUSED HANDLER:    ${h.method} ${h.url}`,
+          `\tUNUSED HANDLER:    ${h.getDescription()}`,
           ...matchingLog
             .filter((l) => l.handler === h)
             .map((l) => {
