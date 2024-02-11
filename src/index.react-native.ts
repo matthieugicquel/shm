@@ -1,8 +1,8 @@
 import { setupInterceptor } from "./interceptors/RCTNetworking";
-import { createServerInstance } from "./serverInstance";
+import { ServerSingleton } from "./singleton";
 
 export const installInterceptor = () => {
-  createServerInstance(setupInterceptor);
+  ServerSingleton.install(setupInterceptor);
 };
 
 export * from "./index.shared";

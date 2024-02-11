@@ -1,9 +1,9 @@
-import { serverInstance } from "./serverInstance";
+import { ServerSingleton } from "./singleton";
 
 export const expectRequestsToMatchHandlers = () => {
-  if (!serverInstance) return;
+  const server = ServerSingleton.get();
 
-  const { activeHandlers, unhandledRequests, matchingLog } = serverInstance.reset();
+  const { activeHandlers, unhandledRequests, matchingLog } = server.reset();
 
   if (unhandledRequests.length > 0) {
     const message = [
