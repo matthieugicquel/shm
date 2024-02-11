@@ -110,3 +110,11 @@ export type http_method = (typeof http_methods)[number];
 export type SetupInterceptor = (
   handler: (request: Request) => Response | Promise<Response> | undefined,
 ) => () => void;
+
+export type Handler = {
+  persistent: boolean;
+  delayMs: number;
+  getDescription: () => string;
+  isMatching: (request: Request, explain: (message: string) => void) => boolean;
+  buildResponse: () => Response;
+};
