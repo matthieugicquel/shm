@@ -32,6 +32,10 @@ jobs:
       - name: Vitest
         run: bun run test:unit
 
-      - name: TypeScript (tester-react-native)
+      - name: Install dependencies (tester-rn)
+        working-directory: ./tester-react-native
+        run: bun install --frozen-lockfile
+
+      - name: TypeScript (tester-rn)
         working-directory: ./tester-react-native
         run: bun run test:types
