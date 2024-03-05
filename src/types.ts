@@ -37,18 +37,24 @@ export type FullHandlerConfig<TResponse> = {
      */
     headers?: Record<string, string>;
   };
-  response?: {
+  response?:
+    | {
+        /**
+         * An HTTP status code like 200, 404, 500, etc.
+         * @default 200
+         */
+        status?: number;
+        /**
+         * The body a matching request will be responded with
+         * Currently, it must be a string or a JS object that can go through `JSON.stringify`
+         */
+        body?: TResponse;
+      }
     /**
-     * An HTTP status code like 200, 404, 500, etc.
-     * @default 200
+     * For advanced use-cases: build the response yourself
+     * ⚠️ This is strongly discouraged in tests, as it allows you to introduce conditionnal logic.
      */
-    status?: number;
-    /**
-     * The body a matching request will be responded with
-     * Currently, it must be a string or a JS object that can go through `JSON.stringify`
-     */
-    body?: TResponse;
-  };
+    | (() => Response);
   /**
    * When true, the handler won't be "consumed" after matching one request, and will continue responding to matching requests
    * Persistent handlers:
@@ -114,6 +120,11 @@ export type SetupInterceptor = (
 export type Handler = {
   persistent: boolean;
   delayMs: number;
+  /**
+   * Used only for debugging/logging purposes
+   *
+   * @example `GET /test?param=1`
+   */
   getDescription: () => string;
   isMatching: (request: Request, explain: (message: string) => void) => boolean;
   buildResponse: () => Response;

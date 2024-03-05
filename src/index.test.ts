@@ -357,6 +357,24 @@ describe("response building", () => {
     expect(response.headers.get("Content-Type")).toEqual("text/plain;charset=UTF-8");
     expect(await response.text()).toEqual("hello string");
   });
+
+  it("responds with a custom response", async () => {
+    mockServer.get("/test", {
+      response: () => {
+        return new Response("hello from custom response", {
+          status: 201,
+          headers: {
+            "Content-Type": "text/plain;charset=UTF-8",
+          },
+        });
+      },
+    });
+
+    const response = await fetch("https://test.com/test");
+
+    expect(response.headers.get("Content-Type")).toEqual("text/plain;charset=UTF-8");
+    expect(await response.text()).toEqual("hello from custom response");
+  });
 });
 
 describe("request assertions", () => {

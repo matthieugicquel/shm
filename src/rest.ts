@@ -125,7 +125,9 @@ const buildRestHandler = (input: ConfigInput): Handler => {
     },
 
     buildResponse: () => {
-      // TODO: we only handle string and JSON responses for now
+      if (typeof config.response === "function") {
+        return config.response();
+      }
 
       if (typeof config.response.body === "string") {
         return new Response(config.response.body, {
@@ -161,10 +163,12 @@ type NormalizedHandlerConfig = {
   url: string;
   persistent: boolean;
   delayMs: number;
-  response: {
-    status: number;
-    body: unknown | undefined;
-  };
+  response:
+    | {
+        status: number;
+        body: unknown | undefined;
+      }
+    | (() => Response);
   request: {
     pathParams: Record<string, string>;
     searchParams: Record<string, string> | undefined;
@@ -207,10 +211,13 @@ const normalizeHandlerConfig = (input: ConfigInput): NormalizedHandlerConfig => 
         ...baseDefinition.request,
         ...config.request,
       },
-      response: {
-        ...baseDefinition.response,
-        ...config.response,
-      },
+      response:
+        typeof config.response === "function"
+          ? config.response
+          : {
+              ...baseDefinition.response,
+              ...config.response,
+            },
     };
   }
 
