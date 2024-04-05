@@ -4,7 +4,7 @@ export { createRestServer as createMockServer } from "./rest";
 
 export { expectRequestsToMatchHandlers } from "./expectRequestsToMatchHandlers";
 
-export type { HandlerConfig } from "./types";
+export type { HandlerConfig, FullHandlerConfig, HandlerTools } from "./types";
 
 export const uninstallInterceptor = () => {
   ServerSingleton.uninstall();

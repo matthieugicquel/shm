@@ -168,6 +168,5 @@ I don't plan to add lots of features, but I strive for very high quality. Don't 
 
 Here are some features that _are_ planned:
 
-- browser env support
 - a way to let unhandled request pass through
 - a better typing story
