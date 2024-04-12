@@ -15,6 +15,7 @@ export const setupInterceptor: SetupInterceptor = (handler) => {
     const responseWithDelay = handler(request);
     if (responseWithDelay) {
       request.respondWith(await responseWithDelay);
+      return;
     }
 
     // if we reach here, the request will passthrough

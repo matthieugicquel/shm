@@ -142,11 +142,18 @@ We want to promote a certain way to define and use api mocks in tests, and provi
 
 ## Usage in an app
 
-```ts
-import { installInterceptor, createMockServer, uninstallInterceptor } from "@matthieug/shm";
+All the [basic APIs](#basic-usage) are available, but there are a few specific options that you may want to use in this case:
 
-// Start intercepting -- Unhandled requests will be responded to with a 404
-installInterceptor();
+```ts
+import {
+  installInterceptor,
+  createMockServer,
+  uninstallInterceptor,
+  passthrough,
+} from "@matthieug/shm";
+
+// Start intercepting -- let unhandled requests passthrough
+installInterceptor({ onUnhandled: passthrough });
 
 const mockServer = createMockServer("https://test.com", {
   // options specified here will apply to all handlers
@@ -158,16 +165,6 @@ const mockServer = createMockServer("https://test.com", {
 uninstallInterceptor();
 ```
 
-All the [basic APIs](#basic-usage) are available.
-
 ## Future plans
 
-While it's already in use in serious codebases™️, this package is still young so you'll probably encounter some problems.
-
 I don't plan to add lots of features, but I strive for very high quality. Don't hesitate to open an issue if you find a bug, or if the docs are unclear, or if an error message is not helpful.
-
-Here are some features that _are_ planned:
-
-- browser env support
-- a way to let unhandled request pass through
-- a better typing story

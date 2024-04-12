@@ -113,6 +113,10 @@ export const http_methods = [
 export type HttpMethod = (typeof HTTP_METHODS)[number];
 export type http_method = (typeof http_methods)[number];
 
+export type InterceptorConfig = {
+  onUnhandled: (request: Request) => Response | undefined;
+};
+
 export type SetupInterceptor = (
   handler: (request: Request) => Response | Promise<Response> | undefined,
 ) => () => void;
