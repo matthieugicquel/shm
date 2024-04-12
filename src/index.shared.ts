@@ -13,3 +13,5 @@ export const uninstallInterceptor = () => {
 export const resetMockServers = () => {
   ServerSingleton.get().reset();
 };
+
+export const passthrough = () => undefined;

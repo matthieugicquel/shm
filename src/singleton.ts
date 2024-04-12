@@ -1,11 +1,11 @@
 import { createServer } from "./server";
-import { SetupInterceptor } from "./types";
+import { InterceptorConfig, SetupInterceptor } from "./types";
 
 let instance: ReturnType<typeof createServer> | undefined;
 
 export const ServerSingleton = {
-  install: (setupInterceptor: SetupInterceptor) => {
-    if (!instance) instance = createServer(setupInterceptor);
+  install: (setupInterceptor: SetupInterceptor, config?: InterceptorConfig) => {
+    if (!instance) instance = createServer(setupInterceptor, config);
   },
   uninstall: () => {
     instance?.dispose();

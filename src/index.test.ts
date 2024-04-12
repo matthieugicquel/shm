@@ -1,7 +1,13 @@
 import axios from "axios";
-import { expect, it, describe, afterEach, vi } from "vitest";
+import { expect, it, describe, afterEach, vi, beforeAll } from "vitest";
 
-import { createMockServer, installInterceptor, resetMockServers } from ".";
+import {
+  createMockServer,
+  installInterceptor,
+  passthrough,
+  resetMockServers,
+  uninstallInterceptor,
+} from ".";
 
 vi.useFakeTimers();
 
@@ -518,5 +524,29 @@ describe("server-level config", () => {
 
     const response2 = await fetch("https://test2.com/test");
     expect(await response2.json()).toEqual(expectedResponse);
+  });
+});
+
+describe("interceptor-level config", () => {
+  beforeAll(() => {
+    uninstallInterceptor();
+    installInterceptor({ onUnhandled: passthrough });
+
+    return () => {
+      uninstallInterceptor();
+      installInterceptor();
+    };
+  });
+
+  it("lets a request passthrough", async () => {
+    const localMockServer = createMockServer("http://0.0.0.0");
+
+    // control
+    localMockServer.get("/test", { response: "hello" });
+    const response = await fetch("http://0.0.0.0/test");
+    expect(response.ok).toEqual(true);
+
+    // real expectation
+    expect(() => fetch("http://0.0.0.0/not-mocked")).rejects.toThrowError();
   });
 });

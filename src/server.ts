@@ -1,7 +1,7 @@
-import type { Handler, HandlerTools, SetupInterceptor } from "./types";
+import type { Handler, HandlerTools, InterceptorConfig, SetupInterceptor } from "./types";
 import { partition } from "./utils";
 
-export const createServer = (setupInterceptor: SetupInterceptor) => {
+export const createServer = (setupInterceptor: SetupInterceptor, config?: InterceptorConfig) => {
   const ActiveHandlers = new Set<Handler>();
   const UnhandledRequests = new Set<Request>();
   const HandledRequests = new Map<Handler, Request>();
@@ -35,7 +35,11 @@ export const createServer = (setupInterceptor: SetupInterceptor) => {
     for (const logEntry of requestLog) MatchingLog.add(logEntry);
     UnhandledRequests.add(request);
 
-    return new Response(JSON.stringify({ message: "No matching handler" }), { status: 404 });
+    const onUnhandled =
+      config?.onUnhandled ??
+      (() => new Response(JSON.stringify({ message: "No matching handler" }), { status: 404 }));
+
+    return onUnhandled(request);
   });
 
   return {
