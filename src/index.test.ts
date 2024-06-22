@@ -62,6 +62,26 @@ describe("baseUrl matching", () => {
 
     expect(await response.json()).toEqual(expectedResponse);
   });
+
+  it("matches a baseUrl with a path segment (without final slash)", async () => {
+    const mockServer2 = createMockServer("https://test2.com/api");
+
+    mockServer2.get("/test", expectedResponse);
+
+    const response = await fetch("https://test2.com/api/test");
+
+    expect(await response.json()).toEqual(expectedResponse);
+  });
+
+  it("matches a baseUrl with a path segment (with final slash)", async () => {
+    const mockServer2 = createMockServer("https://test2.com/api/");
+
+    mockServer2.get("/test", expectedResponse);
+
+    const response = await fetch("https://test2.com/api/test");
+
+    expect(await response.json()).toEqual(expectedResponse);
+  });
 });
 
 describe("method matching", () => {

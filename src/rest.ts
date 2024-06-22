@@ -182,7 +182,7 @@ type NormalizedHandlerConfig = {
 const normalizeHandlerConfig = (input: ConfigInput): NormalizedHandlerConfig => {
   const { method, config, baseUrl, serverConfig } = input;
 
-  const url = normalizeUrl(new URL(input.url, baseUrl).toString());
+  const url = normalizeFullURL(baseUrl, input.url);
 
   const baseDefinition = {
     persistent: false,
@@ -237,4 +237,13 @@ const isFullHandlerConfig = <TResponse>(
   if (config === null) return false;
 
   return "response" in config || "request" in config;
+};
+
+const normalizeFullURL = (base: string, path: string) => {
+  const pathWithoutSlash = path.startsWith("/") ? path.substring(1) : path;
+  const baseWithSlash = base.endsWith("/") ? base : `${base}/`;
+
+  const fullUrl = new URL(pathWithoutSlash, baseWithSlash).toString();
+
+  return normalizeUrl(fullUrl);
 };
