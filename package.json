@@ -49,7 +49,7 @@
     "vitest": "^2.1.2"
   },
   "dependencies": {
-    "@mswjs/interceptors": "^0.25.15",
+    "@mswjs/interceptors": "^0.36.4",
     "regexparam": "^3.0.0"
   }
 }
