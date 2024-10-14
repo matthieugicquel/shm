@@ -1,5 +1,5 @@
 import axios from "axios";
-import { expect, it, describe, afterEach, vi, beforeAll } from "vitest";
+import { expect, it, describe, afterEach, vi, beforeEach } from "vitest";
 
 import {
   createMockServer,
@@ -548,9 +548,8 @@ describe("server-level config", () => {
 });
 
 describe("interceptor-level config", () => {
-  beforeAll(() => {
+  beforeEach(() => {
     uninstallInterceptor();
-    installInterceptor({ onUnhandled: passthrough });
 
     return () => {
       uninstallInterceptor();
@@ -559,6 +558,8 @@ describe("interceptor-level config", () => {
   });
 
   it("lets a request passthrough", async () => {
+    installInterceptor({ onUnhandled: passthrough });
+
     const localMockServer = createMockServer("http://0.0.0.0");
 
     // control
@@ -567,6 +568,16 @@ describe("interceptor-level config", () => {
     expect(response.ok).toEqual(true);
 
     // real expectation
-    expect(() => fetch("http://0.0.0.0/not-mocked")).rejects.toThrowError();
+    await expect(() => fetch("http://0.0.0.0/not-mocked")).rejects.toThrowError();
+  });
+
+  it("uses custom onUnhandled", async () => {
+    installInterceptor({ onUnhandled: () => new Response("custom onUnhandled", { status: 500 }) });
+
+    const response = await fetch("https://test.com/test");
+
+    expect(response.ok).toEqual(false);
+    expect(response.status).toEqual(500);
+    expect(await response.text()).toEqual("custom onUnhandled");
   });
 });

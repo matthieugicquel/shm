@@ -7,6 +7,9 @@ export const createServer = (setupInterceptor: SetupInterceptor, config?: Interc
   const HandledRequests = new Map<Handler, Request>();
   const MatchingLog = new Set<MatchingLogEntry>();
 
+  const handleUnhandled =
+    config?.onUnhandled ?? (() => new Response("No matching handler", { status: 404 }));
+
   const dispose = setupInterceptor((request) => {
     const requestLog = new Set<MatchingLogEntry>();
     const explain = (handler: Handler) => (message: string) => {
@@ -32,14 +35,18 @@ export const createServer = (setupInterceptor: SetupInterceptor, config?: Interc
       }
     }
 
-    for (const logEntry of requestLog) MatchingLog.add(logEntry);
-    UnhandledRequests.add(request);
+    const unhandledResponse = handleUnhandled(request);
 
-    const onUnhandled =
-      config?.onUnhandled ??
-      (() => new Response(JSON.stringify({ message: "No matching handler" }), { status: 404 }));
+    if (unhandledResponse) {
+      // This request should have been handled
+      for (const logEntry of requestLog) MatchingLog.add(logEntry);
+      UnhandledRequests.add(request);
 
-    return onUnhandled(request);
+      return unhandledResponse;
+    }
+
+    // let the request passthrough
+    return;
   });
 
   return {
