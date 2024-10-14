@@ -567,6 +567,6 @@ describe("interceptor-level config", () => {
     expect(response.ok).toEqual(true);
 
     // real expectation
-    expect(() => fetch("http://0.0.0.0/not-mocked")).rejects.toThrowError();
+    await expect(() => fetch("http://0.0.0.0/not-mocked")).rejects.toThrowError();
   });
 });
