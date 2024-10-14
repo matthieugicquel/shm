@@ -11,10 +11,10 @@ export const setupInterceptor: SetupInterceptor = (handler) => {
 
   interceptor.apply();
 
-  interceptor.on("request", async ({ request }) => {
+  interceptor.on("request", async ({ request, controller }) => {
     const responseWithDelay = handler(request);
     if (responseWithDelay) {
-      request.respondWith(await responseWithDelay);
+      controller.respondWith(await responseWithDelay);
       return;
     }
 

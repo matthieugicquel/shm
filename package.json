@@ -41,15 +41,15 @@
     "test:format": "prettier --check ."
   },
   "devDependencies": {
-    "axios": "^1.6.7",
+    "axios": "^1.7.7",
     "bun-types": "latest",
     "np": "^9.2.0",
-    "prettier": "^3.2.4",
-    "typescript": "^5.3.3",
-    "vitest": "^1.2.2"
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.2"
   },
   "dependencies": {
-    "@mswjs/interceptors": "^0.25.15",
+    "@mswjs/interceptors": "^0.36.4",
     "regexparam": "^3.0.0"
   }
 }
