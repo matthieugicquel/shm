@@ -29,7 +29,7 @@ it("indicates an unhandled request / a missing handler", async () => {
   await fetch("https://test.com/test");
 
   expect(getThrownMessage()).toMatchInlineSnapshot(`
-    "SHM: Received requests did not match defined handlers
+    "SHM: Received requests did not match defined mock handlers
     	UNHANDLED REQUEST: GET https://test.com/test
     "
   `);
@@ -39,7 +39,7 @@ it("indicates a unused handler", async () => {
   mockServer.get("/test", body);
 
   expect(getThrownMessage()).toMatchInlineSnapshot(`
-    "SHM: Received requests did not match defined handlers
+    "SHM: Received requests did not match defined mock handlers
     	UNUSED HANDLER:    GET https://test.com/test
     "
   `);
@@ -51,7 +51,7 @@ it("gives the priority to the unhandled request log", async () => {
   await fetch("https://test.com/test2");
 
   expect(getThrownMessage()).toMatchInlineSnapshot(`
-    "SHM: Received requests did not match defined handlers
+    "SHM: Received requests did not match defined mock handlers
     	UNHANDLED REQUEST: GET https://test.com/test2
     	  --> handler GET https://test.com/test1 -> url /test1 !== /test2
     "
@@ -67,7 +67,7 @@ it("searchParam mismatch -> present but wrong value", async () => {
   await fetch("https://test.com/test?id=helo");
 
   expect(getThrownMessage()).toMatchInlineSnapshot(`
-    "SHM: Received requests did not match defined handlers
+    "SHM: Received requests did not match defined mock handlers
     	UNHANDLED REQUEST: GET https://test.com/test?id=helo
     	  --> handler GET https://test.com/test -> searchParam "id" -> "hello" !== "helo"
     "
@@ -83,7 +83,7 @@ it("searchParam mismatch -> param missing in request", async () => {
   await fetch("https://test.com/test");
 
   expect(getThrownMessage()).toMatchInlineSnapshot(`
-    "SHM: Received requests did not match defined handlers
+    "SHM: Received requests did not match defined mock handlers
     	UNHANDLED REQUEST: GET https://test.com/test
     	  --> handler GET https://test.com/test -> searchParam "id" -> expected by handler but absent in request
     "
@@ -99,7 +99,7 @@ it("pathParam mismatch -> present but wrong value", async () => {
   await fetch("https://test.com/test/helo");
 
   expect(getThrownMessage()).toMatchInlineSnapshot(`
-    "SHM: Received requests did not match defined handlers
+    "SHM: Received requests did not match defined mock handlers
     	UNHANDLED REQUEST: GET https://test.com/test/helo
     	  --> handler GET https://test.com/test/:id -> url /test/hello !== /test/helo
     "
@@ -114,7 +114,7 @@ it("pathParam mismatch -> param missing in request", async () => {
   await fetch("https://test.com/test");
 
   expect(getThrownMessage()).toMatchInlineSnapshot(`
-    "SHM: Received requests did not match defined handlers
+    "SHM: Received requests did not match defined mock handlers
     	UNHANDLED REQUEST: GET https://test.com/test
     	  --> handler GET https://test.com/test/:id -> url /test/:id !== /test
     "
@@ -130,7 +130,7 @@ it("header mismatch -> present but wrong value", async () => {
   await fetch("https://test.com/test", { headers: { "x-test": "halo" } });
 
   expect(getThrownMessage()).toMatchInlineSnapshot(`
-    "SHM: Received requests did not match defined handlers
+    "SHM: Received requests did not match defined mock handlers
     	UNHANDLED REQUEST: GET https://test.com/test
     	  --> handler GET https://test.com/test -> header "x-test" -> "hello" !== "halo"
     "
@@ -146,7 +146,7 @@ it("header mismatch -> missing in request", async () => {
   await fetch("https://test.com/test");
 
   expect(getThrownMessage()).toMatchInlineSnapshot(`
-    "SHM: Received requests did not match defined handlers
+    "SHM: Received requests did not match defined mock handlers
     	UNHANDLED REQUEST: GET https://test.com/test
     	  --> handler GET https://test.com/test -> header "x-test" -> expected by handler but absent in request
     "
@@ -172,7 +172,7 @@ it("multiple close requests", async () => {
   await fetch("https://test.com/test?id=helo");
 
   expect(getThrownMessage()).toMatchInlineSnapshot(`
-    "SHM: Received requests did not match defined handlers
+    "SHM: Received requests did not match defined mock handlers
     	UNHANDLED REQUEST: GET https://test.com/test?id=helo
     	  --> handler GET https://test.com/test -> searchParam "id" -> "hello" !== "helo"
     	  --> handler GET https://test.com/test -> searchParam "id2" -> expected by handler but absent in request
@@ -201,7 +201,7 @@ it("logs a persistent handler mismatch for an unhandled request", async () => {
   await fetch("https://test.com/test2");
 
   expect(getThrownMessage()).toMatchInlineSnapshot(`
-    "SHM: Received requests did not match defined handlers
+    "SHM: Received requests did not match defined mock handlers
     	UNHANDLED REQUEST: GET https://test.com/test2
     	  --> handler GET https://test.com/test -> url /test !== /test2
     "

@@ -7,7 +7,7 @@ export const expectRequestsToMatchHandlers = () => {
 
   if (unhandledRequests.length > 0) {
     const message = [
-      "SHM: Received requests did not match defined handlers",
+      "SHM: Received requests did not match defined mock handlers",
       ...unhandledRequests.flatMap<string>((r) => [
         `\tUNHANDLED REQUEST: ${r.method} ${r.url}`,
         ...matchingLog
@@ -25,7 +25,7 @@ export const expectRequestsToMatchHandlers = () => {
 
   if (relevantActiveHandlers.length > 0) {
     const message = [
-      "SHM: Received requests did not match defined handlers",
+      "SHM: Received requests did not match defined mock handlers",
       ...relevantActiveHandlers.flatMap<string>((h) => {
         return [
           `\tUNUSED HANDLER:    ${h.getDescription()}`,
