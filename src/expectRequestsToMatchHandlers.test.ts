@@ -1,6 +1,12 @@
-import { expect, it, afterEach } from "vitest";
+import { expect, it, afterEach, describe, beforeEach } from "vitest";
 
-import { createMockServer, installInterceptor, resetMockServers } from ".";
+import {
+  createMockServer,
+  installInterceptor,
+  passthrough,
+  resetMockServers,
+  uninstallInterceptor,
+} from ".";
 import { expectRequestsToMatchHandlers } from "./expectRequestsToMatchHandlers";
 
 installInterceptor();
@@ -200,4 +206,31 @@ it("logs a persistent handler mismatch for an unhandled request", async () => {
     	  --> handler GET https://test.com/test -> url /test !== /test2
     "
   `);
+});
+
+describe("passthrough", () => {
+  beforeEach(() => {
+    uninstallInterceptor();
+
+    return () => {
+      uninstallInterceptor();
+      installInterceptor();
+    };
+  });
+
+  it("doesn't throw because of passthrough request", async () => {
+    installInterceptor({ onUnhandled: passthrough });
+
+    const localMockServer = createMockServer("http://0.0.0.0");
+
+    // control
+    localMockServer.get("/test", body);
+    const response = await fetch("http://0.0.0.0/test");
+    expect(response.ok).toEqual(true);
+
+    await expect(() => fetch("http://0.0.0.0/not-mocked")).rejects.toThrowError();
+
+    // real expectation
+    expect(getThrownMessage()).toBeUndefined();
+  });
 });
