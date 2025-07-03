@@ -85,7 +85,11 @@ export const setupInterceptor: SetupInterceptor = (handler) => {
 
 const requireReactNativeModules = () => {
   const { Networking, DeviceEventEmitter } = require("react-native");
-  const getDevServerUrl = require("react-native/Libraries/Core/Devtools/getDevServer");
+  const getDevServerModule = require("react-native/Libraries/Core/Devtools/getDevServer");
+
+  // This changed around RN 0.79
+  const getDevServerUrl =
+    typeof getDevServerModule === "function" ? getDevServerModule : getDevServerModule.default;
 
   if (!Networking) {
     throw new SHMReactNativeInterceptorError(
