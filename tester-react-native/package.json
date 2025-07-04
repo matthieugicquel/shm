@@ -11,9 +11,12 @@
   },
   "dependencies": {
     "@expo/metro-runtime": "~5.0.4",
+    "@types/jest": "^30.0.0",
     "axios": "^1.6.7",
     "expo": "~53.0.13",
     "expo-status-bar": "~2.2.3",
+    "jest": "~29.7.0",
+    "jest-expo": "~53.0.9",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-native": "0.79.5",
